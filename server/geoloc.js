@@ -1,11 +1,12 @@
-var geo = new GeoCoder();
+adressToCoords = function(adress) {
+	var geo = new GeoCoder();
 
-var adressToCoords = function(adress) {
 	var result = geo.geocode(adress);
 
-	console.log(adress +': lat '+ result[0].latitude +'/ long '+ result[0].longitude );
-}
+	var coords = {
+		latitude: result[0].latitude,
+		longitude: result[0].longitude
+	}
 
-if(Meteor.startup) {  
-  adressToCoords('9 rue ambroise thomas paris');
+	return coords;
 }
