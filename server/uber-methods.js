@@ -1,14 +1,13 @@
 Meteor.methods({
   fetchUber: function() {
-    var errorJson, result, url;
-    // url = 'https://api.forecast.io/forecast/' + process.env.FORECAST_API_KEY + '/' + location;
-    url = 'https://login.uber.com/oauth/v2/authorize';
-    result = HTTP.get(url);
-    if (result.statusCode === 200) {
-      return JSON.parse(result.content);
-    } else {
-      errorJson = JSON.parse(result.content);
-      throw new Meteor.Error(result.statusCode, errorJson.error);
-    }
+      var Uber = Meteor.npmRequire('node-uber');
+      var uber = new Uber({
+          client_id: '4llalj9NIIx9KclBOsbppOoI2hwReTs9',
+          client_secret: 'fTfqOBqm_v-38q_oAbTnHP70n0fRoT44SSRChtkY',
+          server_token: 'YLprrU0WQ_7alLuc88DfnPx4e0gwTx_dZVFiWCgN',
+          redirect_uri: 'http://localhost:3000',
+          name: 'Slack-Integration'
+      });
+      return uber.getAuthorizeUrl(['profile']);
   }
 });
