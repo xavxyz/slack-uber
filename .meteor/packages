@@ -28,3 +28,5 @@ npm-container
 iron:router
 underscore
 semantic:ui-popup
+aldeed:geocoder
+mdg:geolocation

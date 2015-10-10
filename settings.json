@@ -9,8 +9,8 @@
 	  "token": "xoxp-12253993478-12262981296-12261625907-0667a2cdba",
 	  "channel": "#uber",
 	  "options": {
-		"username": "uBot",
-		"icon_emoji": ":blue_car:"
+			"username": "uBot",
+			"icon_url": "https://slack-assets2.s3-us-west-2.amazonaws.com/ad0d/img/emoji_2015/apple/1f699.png"
 	  }
 	}
   }
