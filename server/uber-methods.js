@@ -12,7 +12,6 @@ Meteor.methods({
           redirect_uri: 'http://localhost:3000',
           name: 'Slack-Integration'
       });
-      console.log('check');
       return HTTP.get(uber.getAuthorizeUrl(['profile']));
   }
 });
