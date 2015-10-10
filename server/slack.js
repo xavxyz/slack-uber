@@ -11,12 +11,6 @@ postMessage = function (msg) {
 
 if(Meteor.startup){
   if(Meteor.isServer){
-    postMessage('initializing the slack-uber integration!');
+    console.log('initializing the slack-uber integration!');
   }
 }
-
-Router.route('/message', function () {
-  console.log(this.params.query.text);
-  postMessage(this.params.query.text);
-  //this.response.end('just posted the following message:' + this.params.query.text + '\n');
-}, {where: 'server'});
