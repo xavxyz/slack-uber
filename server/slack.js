@@ -11,8 +11,6 @@ postMessage = function (msg) {
   });
 };
 
-if(Meteor.startup){
-  if(Meteor.isServer){
-      console.log('initializing the slack-uber integration!');
-  }
+if(Meteor.startup) {
+  console.log('initializing the slack-uber integration!');
 }
