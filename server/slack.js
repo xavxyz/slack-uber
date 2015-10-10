@@ -1,10 +1,12 @@
-TOKEN = Meteor.settings.private.slack.token;
+TOKEN_SLACK = Meteor.settings.private.slack.token;
 CHANNEL = Meteor.settings.private.slack.channel;
 OPTIONS = Meteor.settings.private.slack.options;
 
+console.log(OPTIONS);
+
 postMessage = function (msg) {
   console.log('Posting message', msg);
-  SlackAPI.chat.postMessage(TOKEN, CHANNEL, msg, {}, function (err, res) {
+  SlackAPI.chat.postMessage(TOKEN_SLACK, CHANNEL, msg, OPTIONS, function (err, res) {
     console.log("just posted message!", err, res);
   });
 };
