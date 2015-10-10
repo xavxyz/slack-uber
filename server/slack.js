@@ -1,6 +1,6 @@
-TOKEN = Meteor.settings.slack.token;
-CHANNEL = Meteor.settings.slack.channel;
-OPTIONS = Meteor.settings.slack.options;
+TOKEN = Meteor.settings.private.slack.token;
+CHANNEL = Meteor.settings.private.slack.channel;
+OPTIONS = Meteor.settings.private.slack.options;
 
 postMessage = function (msg) {
   console.log('Posting message', msg);
@@ -11,6 +11,6 @@ postMessage = function (msg) {
 
 if(Meteor.startup){
   if(Meteor.isServer){
-    console.log('initializing the slack-uber integration!');
+      console.log('initializing the slack-uber integration!');
   }
 }

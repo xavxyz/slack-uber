@@ -27,3 +27,4 @@ meteorhacks:npm
 npm-container
 iron:router
 underscore
+semantic:ui-popup

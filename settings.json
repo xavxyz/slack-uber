@@ -1,13 +1,17 @@
 {
+  "private": {
 	"uber": {
-		"token": "YLprrU0WQ_7alLuc88DfnPx4e0gwTx_dZVFiWCgN"
+	  "server_token": "YLprrU0WQ_7alLuc88DfnPx4e0gwTx_dZVFiWCgN",
+	  "client_id": "4llalj9NIIx9KclBOsbppOoI2hwReTs9",
+	  "client_secret": "fTfqOBqm_v-38q_oAbTnHP70n0fRoT44SSRChtkY"
 	},
 	"slack": {
-		"token": "xoxp-12253993478-12262981296-12261625907-0667a2cdba",
-		"channel": "#uber",
-		"options": {
-			"username": "uBot",
-			"icon_emoji": ":blue_car:"
-		}	
+	  "token": "xoxp-12253993478-12262981296-12261625907-0667a2cdba",
+	  "channel": "#uber",
+	  "options": {
+		"username": "uBot",
+		"icon_emoji": ":blue_car:"
+	  }
 	}
+  }
 }
