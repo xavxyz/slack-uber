@@ -1,0 +1,13 @@
+{
+	"uber": {
+		"token": "YLprrU0WQ_7alLuc88DfnPx4e0gwTx_dZVFiWCgN"
+	},
+	"slack": {
+		"token": "xoxp-12253993478-12262981296-12261625907-0667a2cdba",
+		"channel": "#uber",
+		"options": {
+			"username": "uBot",
+			"icon_emoji": ":blue_car:"
+		}	
+	}
+}
