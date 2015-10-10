@@ -22,3 +22,8 @@ force-ssl
 khamoud:slack-api
 http
 meteorhacks:npm
+
+
+npm-container
+iron:router
+underscore
