@@ -27,12 +27,12 @@ Meteor.methods({
             }
         }, function(error, success){
             if(success){
-                postMessage('you are login !');
+                postMessage('Logged in with success!');
                 console.log(success);
                 return success;
             }
             if(error){
-                postMessage('you are not login !');
+                postMessage('Error during login, please try again.');
                 console.log(error);
                 return error;
             }
@@ -40,4 +40,14 @@ Meteor.methods({
     }
 });
 
+fetchMe = function (accessToken) {
+  try {
+    return Meteor.http.get("https://api.uber.com/v1/me", {
+        headers: { Authorization: 'Bearer ' + accessToken 
+        }
+    }).data;
+  } catch (err) {
+    throw new Error("Failed to fetch identity from Uber. " + err.message);
+  }
+};
 
