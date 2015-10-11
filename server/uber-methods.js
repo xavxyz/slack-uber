@@ -164,6 +164,47 @@ requestUber = function(driver, latStart, lngStart, latEnd, lngEnd, access_token)
     return response;
 };
 
-cancelUber = function(requestId) {
-  return HTTP.del('https://sandbox-api.uber.com/v1/requests/'+ requestId);
+cancelUber = function(requestId, access_token) {
+  var response = HTTP.del('https://sandbox-api.uber.com/v1/requests/'+ requestId, {
+    headers: { Authorization: 'Bearer ' + access_token }
+  });
+
+  return response;
 }
+<<<<<<< HEAD
+=======
+
+detailsRequest = function(id_request, access_token){
+  return  HTTP.post('https://sandbox-api.uber.com/v1/requests/'+ id_request, {
+        headers: {
+            Authorization: 'Bearer ' + access_token,
+            'Content-Type': 'application/json; charset=utf-8'
+        }
+    });
+
+};
+
+mapRequest = function(id_request, access_token){
+  return  HTTP.post('https://sandbox-api.uber.com/v1/requests/'+ id_request+'/map/', {
+        headers: {
+            Authorization: 'Bearer ' + access_token,
+            'Content-Type': 'application/json; charset=utf-8'
+        }
+    });
+
+};
+
+changeStatusRequest = function(id_request, status, access_token){
+  return  HTTP.post('https://sandbox-api.uber.com/v1/sandbox/requests/', {
+        headers: {
+            Authorization: 'Bearer ' + access_token,
+            'Content-Type': 'application/json; charset=utf-8'
+        },
+        params: {
+            status: status,
+            request_id: id_request
+        }
+    });
+
+};
+>>>>>>> dc5c13833defd36e06e85cfc844696ce249293a3
