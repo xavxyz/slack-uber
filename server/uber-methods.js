@@ -118,7 +118,11 @@ requestUber = function(driver, latStart, lngStart, latEnd, lngEnd, access_token)
     return response;
 };
 
-cancelUber = function(requestId) {
-  return HTTP.del('https://sandbox-api.uber.com/v1/requests/'+ requestId);
+cancelUber = function(requestId, access_token) {
+  var response = HTTP.del('https://sandbox-api.uber.com/v1/requests/'+ requestId, {
+    headers: { Authorization: 'Bearer ' + access_token }
+  });
+
+  return response;
 }
 
