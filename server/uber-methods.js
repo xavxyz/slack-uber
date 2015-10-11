@@ -74,7 +74,7 @@ getPriceEstimates = function(starting, ending, access_token) {
 
   var list_uber = new Array();
   for(var i = 0; i < response.data.prices.length; i++){
-    if(response.data.products[i].display_name == 'UberX') {
+    if(response.data.prices[i].display_name == 'UberX') {
       list_uber.push(response.data.prices[i]);
     }
   }
@@ -87,6 +87,34 @@ fetchIdentity = function (accessToken) {
         headers: { Authorization: 'Bearer ' + accessToken }
     }).data;
   } catch (err) {
-    throw new Error("Failed to fetch identity from dropbox. " + err.message);
+    throw new Error("Failed to fetch identity from Uber " + err.message);
   }
 };
+
+requestUber = function(product_id, latStart, lngStart, latEnd, lngEnd, access_token){
+  var product_id = "91635e14-4166-46d4-b258-3012e67e008f";
+  var access_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZXMiOlsicHJvZmlsZSIsImhpc3RvcnlfbGl0ZSIsImhpc3RvcnkiXSwic3ViIjoiZjBhNzQ0MTMtM2U3Ni00MWE2LWI2NzQtY2RkMjI3MTcxZWZlIiwiaXNzIjoidWJlci11czEiLCJqdGkiOiJkYjYzMjdhOS02YjViLTQzZDMtOGNmYi0zZjczMDAxYmZjYmYiLCJleHAiOjE0NDcxMzM4MTEsImlhdCI6MTQ0NDU0MTgxMCwidWFjdCI6InVVZlpoVHpGVUwyTk8zYXFCMXhIeFNZMWEyYVBYSyIsIm5iZiI6MTQ0NDU0MTcyMCwiYXVkIjoiNGxsYWxqOU5JSXg5S2NsQk9zYnBwT29JMmh3UmVUczkifQ.LM_oOjgtv6gE_w70bPRvq7k6R8EyLq9UCyWp5JETBM-zFFGwxkwxjLojyLx2nlsWWSx6yYp55p4GFt_sbXyfot43oZV06Hd-wuaQO_8ACf2TggIQUQfu4hO8_sWMNKe9pk_eGiu3pB2C7RD86FBqhNNsLcWE7V3M0jIFt8RkJaLam8FPvbnCyjIzSKHgl6XmJE8yCq2Gf_zG4bde0BVGfAKuCjMph3FoQpy7rsGvjtHYbyX9G0n3li526n9N0EF5xPnFtM4ZQk1yKB4kuCHANmEOpCSJgIfda9SYqUoPk9LVs0kiPASeBwO53UULAHSk5DQqAt91dB2lY1db2rMOkw";
+  
+  /*for(var i = 0; i < response.data.products.length; i++){
+    if(response.data.products[i].display_name = type){
+        list_uber.push(response.data.products[i])
+    }*/
+
+  var response =  HTTP.post('https://sandbox-api.uber.com/v1/requests', {
+        params: {
+            access_token: access_token,
+            product_id: product_id,
+            start_latitude: latStart,
+            start_longitude: lngStart,
+            end_latitude: latEnd,
+            end_longitude: lngEnd
+        }
+    });
+  
+  //id_request = response.
+  console.log(response);
+};
+
+//data = requestUber("is",48.8748033, 2.3472336, 48.8270309, 2.3489661, uber.defaults.success_token);
+//console.log(data)
+
