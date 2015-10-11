@@ -20,10 +20,7 @@ autopublish             # Publish all data to the clients (for prototyping)
 insecure                # Allow all DB writes from clients (for prototyping)
 force-ssl
 khamoud:slack-api
-<<<<<<< HEAD
-=======
 http
->>>>>>> 89df78701a5d56b1ebb5a4fcf27697f2327f556f
 
 iron:router
 underscore
@@ -34,4 +31,3 @@ meteorhacks:npm
 
 meteor 
 npm-container
-http
