@@ -8,7 +8,7 @@ var uber = new Uber({
     client_id: ID,
     client_secret: SECRET,
     server_token: TOKEN_UBER,
-    redirect_uri: 'https://ubot.meteor.com/login',
+    redirect_uri: Meteor.absoluteUrl() + '/login',
     name: 'Slack-Integration'
 });
 
