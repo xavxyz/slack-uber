@@ -20,8 +20,6 @@ autopublish             # Publish all data to the clients (for prototyping)
 insecure                # Allow all DB writes from clients (for prototyping)
 force-ssl
 khamoud:slack-api
-http
-meteorhacks:npm
 
 iron:router
 underscore
@@ -30,5 +28,6 @@ aldeed:geocoder
 mdg:geolocation
 meteorhacks:npm
 
-
+meteor 
 npm-container
+http

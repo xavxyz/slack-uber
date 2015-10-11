@@ -12,31 +12,25 @@ var uber = new Uber({
     name: 'Slack-Integration'
 });
 
-fetchUber = function() {
-    return 'https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=' + uber.defaults.client_id;
-};
-
 Meteor.methods({
+    fetchUber: function() {
+        return 'https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=' + uber.defaults.client_id;
+    },
     authUber: function(AUTHORIZATION_CODE){
-        HTTP.post('https://login.uber.com/oauth/v2/token', {
+        var request =  HTTP.post('https://login.uber.com/oauth/v2/token', {
             auth: [uber.defaults.client_id, uber.defaults.client_secret].join(':'),
             params: {
                 redirect_uri: uber.defaults.redirect_uri,
                 code: AUTHORIZATION_CODE,
                 grant_type: 'authorization_code'
             }
-        }, function(error, success){
-            if(success){
-                postMessage('you are login !');
-                console.log(success);
-                return success;
-            }
-            if(error){
-                postMessage('you are not login !');
-                console.log(error);
-                return error;
-            }
-        })
+        });
+        if(request.data.access_token){
+            postMessage('You are login !');
+        }else{
+            postMessage('You are not login..');
+        }
+        return request;
     }
 });
 
