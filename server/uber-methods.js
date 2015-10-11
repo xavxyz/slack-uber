@@ -169,7 +169,7 @@ requestUber = function(driver, latStart, lngStart, latEnd, lngEnd, access_token,
     }
 
     try {
-        if (SANDBOX) {
+        if (!SANDBOX) {
           url = 'https://api.uber.com/v1/requests';
         } else {
           url = 'https://sandbox-api.uber.com/v1/requests';
