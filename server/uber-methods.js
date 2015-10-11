@@ -102,7 +102,7 @@ requestUber = function(driver, latStart, lngStart, latEnd, lngEnd, access_token)
     };
     console.log('parametres', params);
 
-    var response =  HTTP.post('https://api.uber.com/v1/requests', {
+    var response =  HTTP.post('https://sandbox-api.uber.com/v1/requests', {
         data: params,
         headers: {
             Authorization: 'Bearer ' + access_token,
