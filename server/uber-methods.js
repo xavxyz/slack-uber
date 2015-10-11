@@ -31,6 +31,14 @@ Meteor.methods({
             postMessage('Error during login, please try again.');
         }
         return request;
+    },
+    priceUber: function(surge_confirmation_id) {
+        console.log('confirmation', surge_confirmation_id);
+        var driver = getUberProducts(GEOLOC.starting.latitude, GEOLOC.starting.longitude, "uberX", SUCCESS_TOKEN);
+        var infoUber = requestUber(driver, GEOLOC.starting.latitude, GEOLOC.starting.longitude, GEOLOC.ending.latitude, GEOLOC.ending.longitude, SUCCESS_TOKEN, surge_confirmation_id);
+        console.log(infoUber);
+        postMessage(username + ' has requested a Uber from '+ startingPoint +' to '+ endingPoint +':meteor::taco:');
+        return true;
     }
 });
 
@@ -91,27 +99,39 @@ fetchIdentity = function (accessToken) {
   }
 };
 
-requestUber = function(driver, latStart, lngStart, latEnd, lngEnd, access_token){
+requestUber = function(driver, latStart, lngStart, latEnd, lngEnd, access_token, surge_confirmation_id){
+    var params;
+    if(surge_confirmation_id){
+        params = {
+            product_id: driver[0].product_id,
+            start_latitude: latStart,
+            start_longitude: lngStart,
+            end_latitude: latEnd,
+            end_longitude: lngEnd,
+            surge_confirmation_id: surge_confirmation_id
+        };
+    }else{
+        params = {
+            product_id: driver[0].product_id,
+            start_latitude: latStart,
+            start_longitude: lngStart,
+            end_latitude: latEnd,
+            end_longitude: lngEnd
+        };
+    }
 
-    var params = {
-        product_id: driver[0].product_id,
-        start_latitude: latStart,
-        start_longitude: lngStart,
-        end_latitude: latEnd,
-        end_longitude: lngEnd
-    };
-    console.log('parametres', params);
-
-    var response =  HTTP.post('https://sandbox-api.uber.com/v1/requests', {
-        data: params,
-        headers: {
-            Authorization: 'Bearer ' + access_token,
-            'Content-Type': 'application/json; charset=utf-8'
-        }
-    });
-
-    console.log(response);
-    return response;
+    try {
+        return HTTP.post('https://api.uber.com/v1/requests', {
+            data: params,
+            headers: {
+                Authorization: 'Bearer ' + access_token,
+                'Content-Type': 'application/json; charset=utf-8'
+            }
+        });
+    } catch (err) {
+        console.log('error', err);
+        return err;
+    }
 };
 
 
