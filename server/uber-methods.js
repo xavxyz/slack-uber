@@ -190,12 +190,17 @@ cancelUber = function(requestId, access_token) {
 }
 
 detailsRequest = function(id_request, access_token){
-  return  HTTP.get('https://sandbox-api.uber.com/v1/requests/'+ id_request, {
+  var details = HTTP.get('https://sandbox-api.uber.com/v1/requests/'+ id_request, {
         headers: {
             Authorization: 'Bearer ' + access_token,
             'Content-Type': 'application/json; charset=utf-8'
+        },
+        params: {
+            request_id: id_request
         }
     });
+
+    return details.data;
 
 };
 
