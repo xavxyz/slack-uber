@@ -73,8 +73,8 @@ getPriceEstimates = function(starting, ending, access_token) {
 
   var list_uber = new Array();
   for(var i = 0; i < response.data.prices.length; i++){
-    if(response.data.products[i].display_name = 'UberX') {
-      list_uber.push(response.data.prices[i])
+    if(response.data.products[i].display_name == 'UberX') {
+      list_uber.push(response.data.prices[i]);
     }
   }
 
