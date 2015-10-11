@@ -33,7 +33,53 @@ Meteor.methods({
         }
         return request;
     }
+
 });
+
+getPriceEstimates = function(starting, ending, access_token) {
+  // var geo = new GeoCoder();
+  // var result = geo.geocode('29 champs elysée paris');
+  // var arrivee = geo.geocode('10 rue dupleix paris');
+
+  var url = "https://api.uber.com/v1/estimates/price";
+  var response = HTTP.get(url, {
+    params: {
+      access_token: access_token,
+      start_latitude: starting.latitude,
+      start_longitude: starting.longitude,
+      end_latitude: ending.latitude,
+      end_longitude: ending.longitude
+      // start_latitude: result[0].latitude,
+      // start_longitude: result[0].longitude,
+      // end_latitude: arrivee[0].latitude,
+      // end_longitude: arrivee[0].longitude
+    }
+  });
+  console.log(response);
+
+  var list_uber = [];
+  for (var i = 0; i < response.data.prices.length; i++) {
+    if (response.data.prices[i].display_name == 'uberX') {
+      list_uber.push(response.data.prices[i]);
+    }
+  }
+
+  // return list_uber;
+  // console.log(response.data.prices);
+  // console.log(list_uber);
+  console.log(list_uber)
+
+  var mind = list_uber[0].duration % (60 * 60);
+  // var minutes = Math.floor(mind / 60);
+
+  var toto = {
+    minutes: Math.floor(mind / 60),
+    estimate: list_uber[0].estimate
+  };
+
+  // return list_uber[0].estimate;
+  return toto;
+};
 
 fetchUber = function() {
     return 'https://login.uber.com/oauth/v2/authorize?response_type=code&scope=profile%20request&client_id=' + uber.defaults.client_id;
@@ -121,4 +167,3 @@ requestUber = function(driver, latStart, lngStart, latEnd, lngEnd, access_token)
 cancelUber = function(requestId) {
   return HTTP.del('https://sandbox-api.uber.com/v1/requests/'+ requestId);
 }
-
