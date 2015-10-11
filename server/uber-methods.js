@@ -126,3 +126,26 @@ cancelUber = function(requestId, access_token) {
   return response;
 }
 
+detailsRequest = function(id_request, access_token){
+  return  HTTP.post('https://sandbox-api.uber.com/v1/requests/'+ id_request, {
+        headers: {
+            Authorization: 'Bearer ' + access_token,
+            'Content-Type': 'application/json; charset=utf-8'
+        }
+    });
+
+};
+
+changeStatusRequest = function(id_request, status, access_token){
+  return  HTTP.post('https://sandbox-api.uber.com/v1/sandbox/requests/', {
+        headers: {
+            Authorization: 'Bearer ' + access_token,
+            'Content-Type': 'application/json; charset=utf-8'
+        },
+        params: {
+            status: status,
+            request_id: id_request
+        }
+    });
+
+};
