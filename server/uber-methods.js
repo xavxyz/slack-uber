@@ -14,7 +14,7 @@ uber = new Uber({
 
 Meteor.methods({
     fetchUber: function() {
-        return 'https://login.uber.com/oauth/v2/authorize?response_type=code&client_id=' + uber.defaults.client_id;
+        return 'https://login.uber.com/oauth/v2/authorize?response_type=code&scopes=profile,request&client_id=' + uber.defaults.client_id;
     },
     authUber: function(AUTHORIZATION_CODE) {
         var request =  HTTP.post('https://login.uber.com/oauth/v2/token', {
