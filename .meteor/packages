@@ -21,6 +21,7 @@ insecure                # Allow all DB writes from clients (for prototyping)
 force-ssl
 khamoud:slack-api
 http
+meteorhacks:npm
 
 iron:router
 underscore
