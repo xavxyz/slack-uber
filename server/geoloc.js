@@ -6,7 +6,7 @@ adressToCoords = function(adress) {
 	var coords = {
 		latitude: result[0].latitude,
 		longitude: result[0].longitude
-	}
+	};
 
 	return coords;
-}
+};
