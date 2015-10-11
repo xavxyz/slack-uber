@@ -73,7 +73,7 @@ getPriceEstimates = function(starting, ending, access_token) {
 
   var list_uber = new Array();
   for(var i = 0; i < response.data.prices.length; i++){
-    if(response.data.products[i].display_name == 'UberX') {
+    if(response.data.prices[i].display_name == 'UberX') {
       list_uber.push(response.data.prices[i]);
     }
   }
@@ -87,7 +87,7 @@ fetchIdentity = function (accessToken) {
         headers: { Authorization: 'Bearer ' + accessToken }
     }).data;
   } catch (err) {
-    throw new Error("Failed to fetch identity from dropbox. " + err.message);
+    throw new Error("Failed to fetch identity from Uber " + err.message);
   }
 };
 
