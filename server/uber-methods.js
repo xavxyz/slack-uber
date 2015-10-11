@@ -171,8 +171,6 @@ cancelUber = function(requestId, access_token) {
 
   return response;
 }
-<<<<<<< HEAD
-=======
 
 detailsRequest = function(id_request, access_token){
   return  HTTP.post('https://sandbox-api.uber.com/v1/requests/'+ id_request, {
@@ -207,4 +205,3 @@ changeStatusRequest = function(id_request, status, access_token){
     });
 
 };
->>>>>>> dc5c13833defd36e06e85cfc844696ce249293a3
