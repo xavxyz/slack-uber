@@ -13,9 +13,6 @@ uber = new Uber({
 });
 
 Meteor.methods({
-    fetchUber: function() {
-        return 'https://login.uber.com/oauth/v2/authorize?response_type=code&scopes=profile,request&client_id=' + uber.defaults.client_id;
-    },
     authUber: function(AUTHORIZATION_CODE) {
         var request =  HTTP.post('https://login.uber.com/oauth/v2/token', {
             auth: [uber.defaults.client_id, uber.defaults.client_secret].join(':'),
@@ -29,13 +26,17 @@ Meteor.methods({
         if (request.data.access_token) {
             SUCCESS_TOKEN = request.data.access_token;
             var identity = fetchIdentity(SUCCESS_TOKEN);
-            postMessage(identity.first_name +' '+ identity.last_name +' logged in with success!');
+            postMessage(identity.first_name +' '+ identity.last_name +' logged to Uber in with success!');
         } else {
             postMessage('Error during login, please try again.');
         }
         return request;
     }
 });
+
+fetchUber = function() {
+    return 'https://login.uber.com/oauth/v2/authorize?response_type=code&scope=profile&client_id=' + uber.defaults.client_id;
+};
 
 getUberProducts = function(lat, lng, type, access_token){
   var url = "https://sandbox-api.uber.com/v1/products";
@@ -77,7 +78,6 @@ getPriceEstimates = function(starting, ending, access_token) {
       list_uber.push(response.data.prices[i]);
     }
   }
-
   return list_uber;
 };
 
