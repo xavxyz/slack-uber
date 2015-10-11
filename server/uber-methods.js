@@ -2,6 +2,7 @@ TOKEN_UBER = Meteor.settings.private.uber.server_token;
 ID = Meteor.settings.private.uber.client_id;
 SECRET = Meteor.settings.private.uber.client_secret;
 SUCCESS_TOKEN = null;
+REQUEST_ID = null;
 
 var Uber = Meteor.npmRequire('node-uber');
 uber = new Uber({
@@ -111,7 +112,13 @@ requestUber = function(driver, latStart, lngStart, latEnd, lngEnd, access_token)
     });
 
     console.log(response);
+
+    REQUEST_ID = response.data.request_id;
+
     return response;
 };
 
+cancelUber = function(requestId) {
+  return HTTP.del('https://sandbox-api.uber.com/v1/requests/'+ requestId);
+}
 
