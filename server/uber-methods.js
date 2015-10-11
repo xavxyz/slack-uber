@@ -30,6 +30,7 @@ Meteor.methods({
             if(success){
                 postMessage('Logged in with success!');
                 console.log(success);
+                uber.defaults.success_token = success.access_token;
                 return success;
             }
             if(error){
