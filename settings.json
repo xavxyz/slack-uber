@@ -3,7 +3,8 @@
 	"uber": {
 	  "server_token": "YLprrU0WQ_7alLuc88DfnPx4e0gwTx_dZVFiWCgN",
 	  "client_id": "4llalj9NIIx9KclBOsbppOoI2hwReTs9",
-	  "client_secret": "QNIo5aAO6i0AqPtu0-bNcoyBnOuQS0OFYpOgiIKj"
+	  "client_secret": "QNIo5aAO6i0AqPtu0-bNcoyBnOuQS0OFYpOgiIKj",
+	  "sandbox": "true"
 	},
 	"slack": {
 	  "token": "xoxp-12253993478-12262981296-12261625907-0667a2cdba",

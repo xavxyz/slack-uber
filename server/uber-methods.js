@@ -4,6 +4,7 @@ SECRET = Meteor.settings.private.uber.client_secret;
 SUCCESS_TOKEN = null;
 REQUEST_ID = null;
 
+
 var Uber = Meteor.npmRequire('node-uber');
 uber = new Uber({
     client_id: ID,
@@ -168,7 +169,12 @@ requestUber = function(driver, latStart, lngStart, latEnd, lngEnd, access_token,
     }
 
     try {
-        return HTTP.post('https://api.uber.com/v1/requests', {
+        if (SANDBOX) {
+          url = 'https://api.uber.com/v1/requests';
+        } else {
+          url = 'https://sandbox-api.uber.com/v1/requests';
+        }
+        return HTTP.post(url, {
             data: params,
             headers: {
                 Authorization: 'Bearer ' + access_token,
@@ -215,7 +221,7 @@ mapRequest = function(id_request, access_token){
 };
 
 changeStatusRequest = function(id_request, status, access_token){
-  return  HTTP.post('https://sandbox-api.uber.com/v1/sandbox/requests/', {
+  return  HTTP.get('https://sandbox-api.uber.com/v1/sandbox/requests/'+ id_request, {
         headers: {
             Authorization: 'Bearer ' + access_token,
             'Content-Type': 'application/json; charset=utf-8'
