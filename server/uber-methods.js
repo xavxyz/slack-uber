@@ -1,9 +1,9 @@
 TOKEN_UBER = Meteor.settings.private.uber.server_token;
 ID = Meteor.settings.private.uber.client_id;
 SECRET = Meteor.settings.private.uber.client_secret;
+SANDBOX = Meteor.settings.private.uber.sandbox;
 SUCCESS_TOKEN = null;
 REQUEST_ID = null;
-
 
 var Uber = Meteor.npmRequire('node-uber');
 uber = new Uber({
@@ -15,33 +15,33 @@ uber = new Uber({
 });
 
 Meteor.methods({
-    authUber: function(AUTHORIZATION_CODE) {
-        var request =  HTTP.post('https://login.uber.com/oauth/v2/token', {
-            auth: [uber.defaults.client_id, uber.defaults.client_secret].join(':'),
-            params: {
-                redirect_uri: uber.defaults.redirect_uri,
-                code: AUTHORIZATION_CODE,
-                grant_type: 'authorization_code'
-            }
-        });
-        console.log(request);
-        if (request.data.access_token) {
-            SUCCESS_TOKEN = request.data.access_token;
-            var identity = fetchIdentity(SUCCESS_TOKEN);
-            postMessage(identity.first_name +' '+ identity.last_name +' logged to Uber with success!');
-        } else {
-            postMessage('Error during login, please try again.');
-        }
-        return request;
-    },
-    priceUber: function(surge_confirmation_id) {
-        console.log('confirmation', surge_confirmation_id);
-        var driver = getUberProducts(GEOLOC.starting.latitude, GEOLOC.starting.longitude, "uberX", SUCCESS_TOKEN);
-        var infoUber = requestUber(driver, GEOLOC.starting.latitude, GEOLOC.starting.longitude, GEOLOC.ending.latitude, GEOLOC.ending.longitude, SUCCESS_TOKEN, surge_confirmation_id);
-        console.log(infoUber);
-        postMessage(username + ' has requested a Uber from '+ startingPoint +' to '+ endingPoint +':meteor::taco:');
-        return true;
-    }
+  authUber: function(AUTHORIZATION_CODE) {
+      var request =  HTTP.post('https://login.uber.com/oauth/v2/token', {
+          auth: [uber.defaults.client_id, uber.defaults.client_secret].join(':'),
+          params: {
+              redirect_uri: uber.defaults.redirect_uri,
+              code: AUTHORIZATION_CODE,
+              grant_type: 'authorization_code'
+          }
+      });
+      console.log(request);
+      if (request.data.access_token) {
+          SUCCESS_TOKEN = request.data.access_token;
+          var identity = fetchIdentity(SUCCESS_TOKEN);
+          postMessage(identity.first_name +' '+ identity.last_name +' logged to Uber with success!');
+      } else {
+          postMessage('Error during login, please try again.');
+      }
+      return request;
+  },
+  priceUber: function(surge_confirmation_id) {
+      console.log('confirmation', surge_confirmation_id);
+      var driver = getUberProducts(GEOLOC.starting.latitude, GEOLOC.starting.longitude, "uberX", SUCCESS_TOKEN);
+      var infoUber = requestUber(driver, GEOLOC.starting.latitude, GEOLOC.starting.longitude, GEOLOC.ending.latitude, GEOLOC.ending.longitude, SUCCESS_TOKEN, surge_confirmation_id);
+      console.log(infoUber);
+      postMessage(username + ' has requested a Uber from '+ startingPoint +' to '+ endingPoint +':meteor::taco:');
+      return true;
+  }
 
 });
 
