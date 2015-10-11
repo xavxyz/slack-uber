@@ -22,10 +22,12 @@ force-ssl
 khamoud:slack-api
 http
 
-
-npm-container
 iron:router
 underscore
 semantic:ui-popup
 aldeed:geocoder
 mdg:geolocation
+meteorhacks:npm
+
+
+npm-container
