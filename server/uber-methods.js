@@ -191,6 +191,8 @@ cancelUber = function(requestId, access_token) {
     headers: { Authorization: 'Bearer ' + access_token }
   });
 
+  REQUEST_ID = null;
+
   return response;
 }
 
