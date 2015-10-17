@@ -90,21 +90,30 @@ Router.route('/', function () {
 }, {where: 'server'});
 
 Router.route('/login', function() {
-    var coords = {};
-    navigator.geolocation.getCurrentPosition(function(position){
-        coords.longitude = position.coords.longitude;
-        coords.latitude = position.coords.latitude;
-    });
-    console.log('coordonnées:', coords);
-    coords = {
-        longitude: 0,
-        latitude: 0
-    };
-    Meteor.call('authUber', this.params.query.code, coords, function(error, success){
-        console.log(error);
-        console.log(success);
-        //window.close();
-    });
+    var code = this.params.query.code;
+    navigator.geolocation.getCurrentPosition(setPosition, setDefaultPosition);
+    function setPosition(position){
+        var coords = {
+            longitude: position.coords.longitude,
+            latitude: position.coords.latitude
+        };
+        Meteor.call('authUber', code, coords, function(error, success){
+            console.log(error);
+            console.log(success);
+            window.close();
+        });
+    }
+    function setDefaultPosition(){
+        var coords = {
+            longitude: 0,
+            latitude: 0
+        };
+        Meteor.call('authUber', code, coords, function(error, success){
+            console.log(error);
+            console.log(success);
+            window.close();
+        });
+    }
 }, {where: 'client'});
 
 Router.route('/price', function() {

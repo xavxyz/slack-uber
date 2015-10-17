@@ -3,7 +3,6 @@
  */
 
 Meteor.startup(function(){
-    CHANNEL = Meteor.settings.private.slack.channel;
     OPTIONS = Meteor.settings.private.slack.options;
     TOKEN_UBER = Meteor.settings.private.uber.server_token;
     ID = Meteor.settings.private.uber.client_id;
