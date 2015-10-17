@@ -58,10 +58,6 @@ getPriceEstimates = function(starting, ending, access_token) {
       start_longitude: starting.longitude,
       end_latitude: ending.latitude,
       end_longitude: ending.longitude
-      // start_latitude: result[0].latitude,
-      // start_longitude: result[0].longitude,
-      // end_latitude: arrivee[0].latitude,
-      // end_longitude: arrivee[0].longitude
     }
   });
   console.log(response);
@@ -76,7 +72,7 @@ getPriceEstimates = function(starting, ending, access_token) {
   // return list_uber;
   // console.log(response.data.prices);
   // console.log(list_uber);
-  console.log(list_uber)
+  console.log(list_uber);
 
   var mind = list_uber[0].duration % (60 * 60);
   // var minutes = Math.floor(mind / 60);
@@ -112,27 +108,6 @@ getUberProducts = function(lat, lng, type, access_token){
     }
   }
 
-  return list_uber;
-};
-
-getPriceEstimates = function(starting, ending, access_token) {
-  var url = "https://api.uber.com/v1/estimates/price";
-  var response =  HTTP.get(url, {
-        params: {
-            access_token: access_token,
-            start_latitude: starting.latitude,
-            start_longitude: starting.longitude,
-            end_latitude: ending.latitude,
-            end_longitude: ending.longitude
-        }
-    });
-
-  var list_uber = new Array();
-  for(var i = 0; i < response.data.prices.length; i++){
-    if(response.data.prices[i].display_name == 'uberX') {
-      list_uber.push(response.data.prices[i]);
-    }
-  }
   return list_uber;
 };
 
