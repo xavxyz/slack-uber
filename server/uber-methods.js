@@ -169,7 +169,7 @@ cancelUber = function(requestId, access_token) {
   REQUEST_ID = null;
 
   return response;
-}
+};
 
 detailsRequest = function(id_request, access_token){
   var details = HTTP.get('https://sandbox-api.uber.com/v1/requests/'+ id_request, {
@@ -181,9 +181,7 @@ detailsRequest = function(id_request, access_token){
             request_id: id_request
         }
     });
-
     return details.data;
-
 };
 
 mapRequest = function(id_request, access_token){
@@ -193,7 +191,6 @@ mapRequest = function(id_request, access_token){
             'Content-Type': 'application/json; charset=utf-8'
         }
     });
-
 };
 
 changeStatusRequest = function(id_request, status, access_token){
@@ -207,5 +204,4 @@ changeStatusRequest = function(id_request, status, access_token){
             request_id: id_request
         }
     });
-
 };
