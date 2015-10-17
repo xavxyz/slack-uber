@@ -55,9 +55,9 @@ Meteor.methods({
               },{
                   $set: set
               }, function(error, success){
-                  console.log('update error',error);
+                  console.log('update error', error);
                   console.log('update success', success);
-                  postMessage(SLACK_QUERY.user_id, identity.first_name +' '+ identity.last_name +' logged to Uber with success!');
+                  postMessage(identity.first_name +' '+ identity.last_name +' logged to Uber with success!');
 
               });
           }else{
