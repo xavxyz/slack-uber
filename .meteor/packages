@@ -31,3 +31,8 @@ meteorhacks:npm
 
 meteor 
 npm-container
+aldeed:simple-schema
+aldeed:collection2
+dburles:collection-helpers
+matb33:collection-hooks
+reywood:publish-composite
