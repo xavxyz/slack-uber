@@ -70,10 +70,12 @@ uberSchema = new SimpleSchema({
 coordSchema = new SimpleSchema({
     longitude: {
         type: Number,
+        decimal: true,
         optional: false
     },
     latitude: {
         type: Number,
+        decimal: true,
         optional: false
     }
 });
