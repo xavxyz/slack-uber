@@ -1,47 +1,17 @@
-GEOLOC = 0;
+Router.route('/', function () {
+  console.log(this.params.query);
+  SLACK_QUERY = this.params.query;
 
-Router.route('/login', function() {
-    Meteor.call('authUber', this.params.query.code, function(error, success){
-        console.log(error);
-        console.log(success);
-        window.close();
-    });
-}, {where: 'client'});
-
-Router.route('/price', function() {
-    Meteor.call('priceUber', this.params.query.surge_confirmation_id, function(error, success){
-        console.log(error);
-        console.log(success);
-        window.close();
-    });
-}, {where: 'client'});
-
-/*
-Router.route('/status', function () {
-  var data = this.params.query.data;
-
-  if(data.event_type == "requests.status_changed") {
-    var identity = fetchIdentity(SUCCESS_TOKEN);
-    postMessage(identity.first_name +', votre Uber a changé de statut : '+ data.meta.status +' :bowtie:');
-  }
-
-}, {where: 'server'});
-*/
-
-Router.route('/message', function () {
-  var text = this.params.query.text,
-      username = this.params.query.user_name;
-
-  if (text == 'auth') {
+  if (SLACK_QUERY.text === 'auth') {
       var link = fetchUber();
-      this.response.end('Hey ' + username + ', you have to authorize Uber to interact in Slack: \n' +
+      this.response.end('Hey ' + SLACK_QUERY.user_name + ', you have to authorize Uber to interact in Slack: \n' +
           'Please <' + link + '|click here>');
 
-  } else if (text.indexOf('request') == 0) {
+  }else if (SLACK_QUERY.text.indexOf('request') == 0) {
 
-    var separator = text.indexOf('/');
+    var separator = SLACK_QUERY.text.indexOf('/');
     if (separator > -1) {
-      var allParams = text.slice(7); // remove request from the text
+      var allParams = SLACK_QUERY.text.slice(7); // remove request from the text
       var adress = allParams.split('/'); // make an array with the adresses
       var startingPoint = adress[0].trim(), // removal of the spaces
           endingPoint = adress[1].trim();
@@ -118,3 +88,41 @@ Router.route('/message', function () {
     this.response.end('Not a valid option! Try `auth`, `request`, `cancel` or `status`');
   }
 }, {where: 'server'});
+
+Router.route('/login', function() {
+    var coords = {};
+    navigator.geolocation.getCurrentPosition(function(position){
+        coords.longitude = position.coords.longitude;
+        coords.latitude = position.coords.latitude;
+    });
+    console.log('coordonnées', coords);
+    coords = {
+        longitude: 0,
+        latitude: 0
+    };
+    Meteor.call('authUber', this.params.query.code, coords, function(error, success){
+        console.log(error);
+        console.log(success);
+        window.close();
+    });
+}, {where: 'client'});
+
+Router.route('/price', function() {
+    Meteor.call('priceUber', this.params.query.surge_confirmation_id, function(error, success){
+        console.log(error);
+        console.log(success);
+        window.close();
+    });
+}, {where: 'client'});
+
+/*
+ Router.route('/status', function () {
+ var data = this.params.query.data;
+
+ if(data.event_type == "requests.status_changed") {
+ var identity = fetchIdentity(SUCCESS_TOKEN);
+ postMessage(identity.first_name +', votre Uber a changé de statut : '+ data.meta.status +' :bowtie:');
+ }
+
+ }, {where: 'server'});
+ */

@@ -7,96 +7,96 @@ Users = new Mongo.Collection('users');
 slackSchema = new SimpleSchema({
     userId: {
         type: String,
-        required: true
+        optional: false
     },
-    firstName: {
+    name: {
         type: String,
-        required: true
+        optional: false
     },
-    lastName: {
+    token: {
         type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true
+        optional: false
     }
 });
 
 uberSchema = new SimpleSchema({
     userId: {
         type: String,
-        required: true
+        optional: false
     },
     firstName: {
         type: String,
-        required: true
+        optional: false
     },
     lastName: {
         type: String,
-        required: true
+        optional: false
+    },
+    picture: {
+        type: String,
+        optional: false
     },
     email: {
         type: String,
-        required: true
+        optional: false
     },
     successToken: {
         type: String,
-        required: false
+        optional: false
     },
     tokenCreatedAt: {
         type: Date,
-        required: false
+        optional: false
     },
     mainProduct: {
         type: String,
         defaultValue: 'uberX',
-        required: true
+        optional: false
     },
     requestId: {
         type: String,
-        required: false
+        optional: true
     },
     requestStatus: {
         type: String,
-        required: false
+        optional: true
     }
 });
 
 coordSchema = new SimpleSchema({
     longitude: {
         type: Number,
-        required: true
+        optional: false
     },
     latitude: {
         type: Number,
-        required: true
+        optional: false
     }
 });
 
 geoLocSchema = new SimpleSchema({
     start: {
         type: coordSchema,
-        required: true
+        optional: false
     },
     end: {
         type: coordSchema,
-        required: false
+        optional: true
     }
 });
 
 userSchema = new SimpleSchema({
     slack: {
         type: [slackSchema],
-        required: true
+        optional: false
     },
     uber: {
         type: uberSchema,
-        required: true
+        optional: false
     },
     geoLoc: {
         type: geoLocSchema,
-        required: true
+        optional: false
     }
 });
 
