@@ -31,7 +31,8 @@ Meteor.methods({
                   setSlack.push({
                       userId: SLACK_QUERY.user_id,
                       name: SLACK_QUERY.user_name,
-                      token: SLACK_QUERY.token
+                      token: SLACK_QUERY.token,
+                      channel: SLACK_QUERY.channel_id
                   });
               }
 
@@ -44,21 +45,20 @@ Meteor.methods({
               setGeoLoc.start.longitude = coords.longitude;
               setGeoLoc.start.latitude = coords.latitude;
 
+              var set = {
+                  slack: setSlack,
+                  uber: setUber,
+                  geoLoc: setGeoLoc
+              };
               Users.update({
                   'uber.userId': identity.uuid
               },{
-                  slack: {
-                      $set: setSlack
-                  },
-                  uber: {
-                      $set: setUber
-                  },
-                  geoLoc: {
-                      $set: setGeoLoc
-                  }
+                  $set: set
               }, function(error, success){
                   console.log('update error',error);
                   console.log('update success', success);
+                  postMessage(SLACK_QUERY.user_id, identity.first_name +' '+ identity.last_name +' logged to Uber with success!');
+
               });
           }else{
               console.log('User don\'t exist !');
@@ -67,7 +67,8 @@ Meteor.methods({
                       {
                           userId: SLACK_QUERY.user_id,
                           name: SLACK_QUERY.user_name,
-                          token: SLACK_QUERY.token
+                          token: SLACK_QUERY.token,
+                          channel: SLACK_QUERY.channel_id
                       }
                   ],
                   uber: {
@@ -88,9 +89,9 @@ Meteor.methods({
               }, function(error, success){
                   console.log('insert error', error);
                   console.log('insert success', success);
+                  postMessage( identity.first_name +' '+ identity.last_name +' logged to Uber with success!');
               })
           }
-          postMessage(SLACK_QUERY.user_id, identity.first_name +' '+ identity.last_name +' logged to Uber with success!');
       } else {
           postMessage('Error during login, please try again.');
       }

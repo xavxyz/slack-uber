@@ -16,6 +16,10 @@ slackSchema = new SimpleSchema({
     token: {
         type: String,
         optional: false
+    },
+    channel: {
+        type: String,
+        optional: false
     }
 });
 

@@ -95,7 +95,7 @@ Router.route('/login', function() {
         coords.longitude = position.coords.longitude;
         coords.latitude = position.coords.latitude;
     });
-    console.log('coordonnées', coords);
+    console.log('coordonnées:', coords);
     coords = {
         longitude: 0,
         latitude: 0
@@ -103,7 +103,7 @@ Router.route('/login', function() {
     Meteor.call('authUber', this.params.query.code, coords, function(error, success){
         console.log(error);
         console.log(success);
-        window.close();
+        //window.close();
     });
 }, {where: 'client'});
 
