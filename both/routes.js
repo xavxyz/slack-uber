@@ -59,14 +59,14 @@ Router.route('/', function () {
     } else {
       this.response.end("I guess you forgot something! Syntax : `/uber request starting point / end point`");
     }
-  } else if (text == 'cancel') {
+  } else if (SLACK_QUERY.text == 'cancel') {
     if ( REQUEST_ID != null ) {
       cancelUber(REQUEST_ID, SUCCESS_TOKEN);
       postMessage(username + ' cancelled his ride! :suspect:');
     } else {
       this.response.end('Sorry mate, you cannot cancel a ride which does not exist :wink:');
     }
-  } else if (text == 'status') {
+  } else if (SLACK_QUERY.text == 'status') {
     if ( REQUEST_ID != null ) {
       var details = detailsRequest(REQUEST_ID, SUCCESS_TOKEN);
       postMessage(username + " want to know what's up with Uber :" + details.status);
@@ -74,7 +74,7 @@ Router.route('/', function () {
       this.response.end('Hey dude, a ride need to be requested to be aware of its status :squirrel:');
     }
 
-  } else if (text == 'force') {
+  } else if (SLACK_QUERY.text == 'force') {
     changeStatusRequest(REQUEST_ID, 'accepted', SUCCESS_TOKEN);
     postMessage('Chgt de statut forcé 1');
     
