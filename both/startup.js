@@ -11,6 +11,7 @@ Meteor.startup(function(){
     SLACK_QUERY = {};
     GEOLOC = 0;
     REQUEST_ID = null;
+    CURRENT_USER = {};
     var Uber = Meteor.npmRequire('node-uber');
     uber = new Uber({
         client_id: ID,

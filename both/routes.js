@@ -1,6 +1,9 @@
 Router.route('/', function () {
   console.log(this.params.query);
   SLACK_QUERY = this.params.query;
+  CURRENT_USER = Users.findOne({
+    'slack.userId' : SLACK_QUERY.user_id
+  });
 
   if (SLACK_QUERY.text === 'auth') {
       var link = fetchUber();
@@ -16,26 +19,26 @@ Router.route('/', function () {
       var startingPoint = adress[0].trim(), // removal of the spaces
           endingPoint = adress[1].trim();
 
-        console.log('adress', adress);
-        console.log('startingPoint', startingPoint);
-        console.log('endingPoint', endingPoint);
+      console.log('adress', adress);
+      console.log('startingPoint', startingPoint);
+      console.log('endingPoint', endingPoint);
       var geoLoc = {
-        starting: adressToCoords(startingPoint),
-        ending: adressToCoords(endingPoint)
+          starting: adressToCoords(startingPoint),
+          ending: adressToCoords(endingPoint)
       };
-        GEOLOC = geoLoc;
-        console.log('géolocalisation', GEOLOC);
+      GEOLOC = geoLoc;
+      console.log('géolocalisation', GEOLOC);
 
-      if ( SUCCESS_TOKEN != null) {
-          var driver = getUberProducts(geoLoc.starting.latitude, geoLoc.starting.longitude, "uberX", SUCCESS_TOKEN);
-          console.log('driver: '+ driver);
+      if ( CURRENT_USER.uber.successToken != null) {
+          var driver = getUberProducts(geoLoc.starting.latitude, geoLoc.starting.longitude, "uberX", CURRENT_USER.uber.successToken);
+          console.log('driver: '+ JSON.stringify(driver));
 
           if (driver.length == 0) {
               this.response.end('No driver available for your request... :squirrel:');
           } else {
-              var infoUber = requestUber(driver, geoLoc.starting.latitude, geoLoc.starting.longitude, geoLoc.ending.latitude, geoLoc.ending.longitude, SUCCESS_TOKEN);
+              var infoUber = requestUber(driver, geoLoc.starting.latitude, geoLoc.starting.longitude, geoLoc.ending.latitude, geoLoc.ending.longitude, CURRENT_USER.uber.successToken);
 
-              console.log('infos sur le uber :'+ infoUber);
+              console.log('infos sur le uber :'+ JSON.stringify(infoUber));
 
               if(infoUber.meta && infoUber.meta.surge_confirmation.href){
                   console.log('Have to accept surge pricing');
@@ -45,10 +48,10 @@ Router.route('/', function () {
                   console.log('REQUEST_ID', infoUber.data.request_id);
                 REQUEST_ID = infoUber.data.request_id;
                 //var map = mapRequest(REQUEST_ID,SUCCESS_TOKEN);
-                postMessage(username + ' has requested a Uber from '+ startingPoint +' to '+ endingPoint +':meteor::taco:');
+                postMessage(CURRENT_USER.slack.name +' has requested a Uber from '+ startingPoint +' to '+ endingPoint +' :rocket:');
                 //postMessage('Map : ' + map.href);
                 console.log('infoUber', infoUber);
-                var success = getPriceEstimates(geoLoc.starting, geoLoc.ending, SUCCESS_TOKEN);
+                var success = getPriceEstimates(geoLoc.starting, geoLoc.ending, CURRENT_USER.uber.successToken);
                 postMessage('The average timetravel will be: ' + success.minutes + ' min and the average cost will be: ' + success.estimate );
               }
           }
@@ -61,27 +64,27 @@ Router.route('/', function () {
     }
   } else if (SLACK_QUERY.text == 'cancel') {
     if ( REQUEST_ID != null ) {
-      cancelUber(REQUEST_ID, SUCCESS_TOKEN);
+      cancelUber(REQUEST_ID, CURRENT_USER.uber.successToken);
       postMessage(username + ' cancelled his ride! :suspect:');
     } else {
       this.response.end('Sorry mate, you cannot cancel a ride which does not exist :wink:');
     }
   } else if (SLACK_QUERY.text == 'status') {
     if ( REQUEST_ID != null ) {
-      var details = detailsRequest(REQUEST_ID, SUCCESS_TOKEN);
+      var details = detailsRequest(REQUEST_ID, CURRENT_USER.uber.successToken);
       postMessage(username + " want to know what's up with Uber :" + details.status);
     } else {
       this.response.end('Hey dude, a ride need to be requested to be aware of its status :squirrel:');
     }
 
   } else if (SLACK_QUERY.text == 'force') {
-    changeStatusRequest(REQUEST_ID, 'accepted', SUCCESS_TOKEN);
+    changeStatusRequest(REQUEST_ID, 'accepted', CURRENT_USER.uber.successToken);
     postMessage('Chgt de statut forcé 1');
     
-    changeStatusRequest(REQUEST_ID, 'arriving', SUCCESS_TOKEN);
+    changeStatusRequest(REQUEST_ID, 'arriving', CURRENT_USER.uber.successToken);
     postMessage('Chgt de statut forcé 2');
     
-    changeStatusRequest(REQUEST_ID, 'driver_canceled', SUCCESS_TOKEN);
+    changeStatusRequest(REQUEST_ID, 'driver_canceled', CURRENT_USER.uber.successToken);
     postMessage('Chgt de statut forcé 3');
     
   } else {

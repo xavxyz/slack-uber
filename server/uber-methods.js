@@ -57,6 +57,7 @@ Meteor.methods({
               }, function(error, success){
                   console.log('update error', error);
                   console.log('update success', success);
+
                   postMessage(identity.first_name +' '+ identity.last_name +' logged to Uber with success!');
 
               });
@@ -89,6 +90,7 @@ Meteor.methods({
               }, function(error, success){
                   console.log('insert error', error);
                   console.log('insert success', success);
+
                   postMessage( identity.first_name +' '+ identity.last_name +' logged to Uber with success!');
               })
           }
