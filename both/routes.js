@@ -45,10 +45,10 @@ Router.route('/', function () {
                 this.response.end('You have to accept surge supricing: \n' +
                                   'Please <' + infoUber.href + '|click here>');
               } else {
-                  console.log('REQUEST_ID', infoUber.data.request_id);
+                console.log('REQUEST_ID', infoUber.data.request_id);
                 REQUEST_ID = infoUber.data.request_id;
                 //var map = mapRequest(REQUEST_ID,SUCCESS_TOKEN);
-                postMessage(CURRENT_USER.slack.name +' has requested a Uber from '+ startingPoint +' to '+ endingPoint +' :rocket:');
+                postMessage(CURRENT_USER.slack[0].name +' has requested a Uber from '+ startingPoint +' to '+ endingPoint +' :rocket:');
                 //postMessage('Map : ' + map.href);
                 console.log('infoUber', infoUber);
                 var success = getPriceEstimates(geoLoc.starting, geoLoc.ending, CURRENT_USER.uber.successToken);
@@ -65,7 +65,7 @@ Router.route('/', function () {
   } else if (SLACK_QUERY.text == 'cancel') {
     if ( REQUEST_ID != null ) {
       cancelUber(REQUEST_ID, CURRENT_USER.uber.successToken);
-      postMessage(username + ' cancelled his ride! :suspect:');
+      postMessage(CURRENT_USER.slack[0].name + ' cancelled his ride! :suspect:');
     } else {
       this.response.end('Sorry mate, you cannot cancel a ride which does not exist :wink:');
     }
