@@ -1,7 +1,3 @@
-/**
- * Created by thomas on 17/10/15.
- */
-
 postMessage = function ( msg) {
     console.log('Posting message', msg);
     SlackAPI.chat.postMessage(
