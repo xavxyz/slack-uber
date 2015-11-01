@@ -1,7 +1,3 @@
-/**
- * Created by thomas on 17/10/15.
- */
-
 getPriceEstimates = function(starting, ending, access_token) {
     // var geo = new GeoCoder();
     // var result = geo.geocode('29 champs elysée paris');
@@ -126,7 +122,7 @@ requestUber = function(driver, latStart, lngStart, latEnd, lngEnd, access_token,
             }}
         );
 
-        return req;
+        return response;
 
     } catch (err) {
         console.log('error', err);
