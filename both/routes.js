@@ -64,28 +64,28 @@ Router.route('/', function () {
         this.response.end("I guess you forgot something! Syntax : `/uber request starting point / end point`");
       }
     } else if (SLACK_QUERY.text == 'cancel') {
-      if (REQUEST_ID != null) {
-        cancelUber(REQUEST_ID, CURRENT_USER.uber.successToken);
+      if (CURRENT_USER.uber.requestId) {
+        cancelUber(CURRENT_USER.uber.requestId, CURRENT_USER.uber.successToken);
         postMessage(CURRENT_USER.slack[0].name + ' cancelled his ride! :suspect:');
       } else {
         this.response.end('Sorry mate, you cannot cancel a ride which does not exist :wink:');
       }
     } else if (SLACK_QUERY.text == 'status') {
-      if (REQUEST_ID != null) {
-        var details = detailsRequest(REQUEST_ID, CURRENT_USER.uber.successToken);
-        postMessage(username + " want to know what's up with Uber :" + details.status);
+      if (CURRENT_USER.uber.requestId) {
+        var details = detailsRequest(CURRENT_USER.uber.requestId, CURRENT_USER.uber.successToken);
+        postMessage(CURRENT_USER.slack[0].name + " want to know what's up with Uber :" + details.status);
       } else {
         this.response.end('Hey dude, a ride need to be requested to be aware of its status :squirrel:');
       }
 
     } else if (SLACK_QUERY.text == 'force') {
-      changeStatusRequest(REQUEST_ID, 'accepted', CURRENT_USER.uber.successToken);
+      changeStatusRequest(CURRENT_USER.uber.requestId, 'accepted', CURRENT_USER.uber.successToken);
       postMessage('Chgt de statut forcé 1');
 
-      changeStatusRequest(REQUEST_ID, 'arriving', CURRENT_USER.uber.successToken);
+      changeStatusRequest(CURRENT_USER.uber.requestId, 'arriving', CURRENT_USER.uber.successToken);
       postMessage('Chgt de statut forcé 2');
 
-      changeStatusRequest(REQUEST_ID, 'driver_canceled', CURRENT_USER.uber.successToken);
+      changeStatusRequest(CURRENT_USER.uber.requestId, 'driver_canceled', CURRENT_USER.uber.successToken);
       postMessage('Chgt de statut forcé 3');
 
     } else {
@@ -131,14 +131,12 @@ Router.route('/price', function() {
     });
 }, {where: 'client'});
 
-/*
- Router.route('/status', function () {
+Router.route('/status', function () {
  var data = this.params.query.data;
 
  if(data.event_type == "requests.status_changed") {
- var identity = fetchIdentity(SUCCESS_TOKEN);
- postMessage(identity.first_name +', votre Uber a changé de statut : '+ data.meta.status +' :bowtie:');
+   var identity = fetchIdentity(SUCCESS_TOKEN);
+   postMessage(identity.first_name +', votre Uber a changé de statut : '+ data.meta.status +' :bowtie:');
  }
 
- }, {where: 'server'});
- */
+}, {where: 'server'});
