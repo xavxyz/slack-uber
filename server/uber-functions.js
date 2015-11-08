@@ -122,7 +122,7 @@ cancelUber = function(userId, requestId, access_token) {
     var response = HTTP.del('https://api.uber.com/v1/requests/'+ requestId, {
         headers: { Authorization: 'Bearer ' + access_token }
     });
-    Meteor.update({_id: userId}, { 'uber.requestId' : null}, function(error, result){
+    Users.update(userId, {$set: {'uber.requestId': null}}, function(error, result){
         console.log(error);
         console.log(result);
     });
