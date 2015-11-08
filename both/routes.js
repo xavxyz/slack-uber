@@ -202,14 +202,14 @@ Router.route('/price', function() {
     });
 }, {where: 'client'});
 
-/*
- Router.route('/status', function () {
- var data = this.params.query.data;
+Router.route('/status', function () {
+    var data = this.params.query.data;
+    var currentUser = Users.findOne({
+        'slack.userId' : SLACK_QUERY.user_id
+    });
+    if(data.event_type == "requests.status_changed") {
+        var identity = fetchIdentity(currentUser.uber.successToken);
+        postMessage(identity.first_name +', votre Uber a changé de statut : '+ data.meta.status +' :bowtie:');
+    }
 
- if(data.event_type == "requests.status_changed") {
- var identity = fetchIdentity(SUCCESS_TOKEN);
- postMessage(identity.first_name +', votre Uber a changé de statut : '+ data.meta.status +' :bowtie:');
- }
-
- }, {where: 'server'});
- */
+}, {where: 'server'});
