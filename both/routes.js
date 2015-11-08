@@ -65,7 +65,7 @@ Router.route('/', function () {
                             console.log(result);
                         });
                         //var map = mapRequest(REQUEST_ID,SUCCESS_TOKEN);
-                        postMessage(currentUser.slack[0].name +' has requested a Uber from '+ startingPoint +' to '+ endingPoint +' :rocket:');
+                        postMessage(SLACK_QUERY.user_name +' has requested a Uber from '+ startingPoint +' to '+ endingPoint +' :rocket:');
                         //postMessage('Map : ' + map.href);
                         console.log('infoUber', infoUber);
                         success = getPriceEstimates(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken);
@@ -121,9 +121,17 @@ Router.route('/', function () {
                         });
                         //var map = mapRequest(REQUEST_ID,SUCCESS_TOKEN);
                         var geo = new GeoCoder();
+                        console.log('startingPoint currentUser: ');
+                        console.log(currentUser.geoLoc.start);
+                        console.log('endingPoint currentUser: ');
+                        console.log(currentUser.geoLoc.end);
                         startingPoint = geo.reverse(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude);
                         endingPoint = geo.reverse(currentUser.geoLoc.end.latitude, currentUser.geoLoc.end.latitude);
-                        postMessage(currentUser.slack[0].name +' has requested a Uber from '+ startingPoint +' to '+ endingPoint +' :rocket:');
+                        console.log('startingPoint: ');
+                        console.log(startingPoint);
+                        console.log('endingPoint: ');
+                        console.log(endingPoint);
+                        postMessage(SLACK_QUERY.user_name +' has requested a Uber from '+ startingPoint +' to '+ endingPoint +' :rocket:');
                         //postMessage('Map : ' + map.href);
                         console.log('infoUber', infoUber);
                         success = getPriceEstimates(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken);
@@ -137,14 +145,14 @@ Router.route('/', function () {
     } else if (SLACK_QUERY.text == 'cancel') {
         if ( currentUser.uber.requestId != null ) {
             cancelUber(currentUser._id, currentUser.uber.requestId, currentUser.uber.successToken);
-            postMessage(currentUser.slack[0].name + ' cancelled his ride! :suspect:');
+            postMessage(SLACK_QUERY.user_name + ' cancelled his ride! :suspect:');
         } else {
             this.response.end('Sorry mate, you cannot cancel a ride which does not exist :wink:');
         }
     } else if (SLACK_QUERY.text == 'status') {
         if ( currentUser.uber.requestId != null ) {
             var details = detailsRequest(currentUser.uber.requestId, currentUser.uber.successToken);
-            postMessage(username + " want to know what's up with Uber :" + details.status);
+            postMessage(SLACK_QUERY.user_name + " want to know what's up with Uber :" + details.status);
         } else {
             this.response.end('Hey dude, a ride need to be requested to be aware of its status :squirrel:');
         }
