@@ -11,7 +11,7 @@ Router.route('/', function () {
             'Please <' + link + '|click here>');
 
     }else if (SLACK_QUERY.text.indexOf('request') == 0) {
-        var separator = SLACK_QUERY.text.indexOf('/'), allParams, adress, startingPoint, endingPoint, driver, infoUber, success;
+        var separator = SLACK_QUERY.text.indexOf('/'), allParams, adress, startingPoint, endingPoint, driver, infoUber, success, geo;
         if (separator > -1) {
             allParams = SLACK_QUERY.text.slice(7); // remove request from the text
             adress = allParams.split('/'); // make an array with the adresses
@@ -65,7 +65,10 @@ Router.route('/', function () {
                             console.log(result);
                         });
                         //var map = mapRequest(REQUEST_ID,SUCCESS_TOKEN);
-                        postMessage(SLACK_QUERY.user_name +' has requested a Uber from '+ startingPoint +' to '+ endingPoint +' :rocket:');
+                        geo = new GeoCoder();
+                        startingPoint = geo.reverse(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude);
+                        endingPoint = geo.reverse(currentUser.geoLoc.end.latitude, currentUser.geoLoc.end.longitude);
+                        postMessage(SLACK_QUERY.user_name +' has requested a Uber from '+ startingPoint[0].formattedAddress +' to '+ endingPoint[0].formattedAddress +' :rocket:');
                         //postMessage('Map : ' + map.href);
                         console.log('infoUber', infoUber);
                         success = getPriceEstimates(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken);
@@ -120,18 +123,10 @@ Router.route('/', function () {
                             console.log(result);
                         });
                         //var map = mapRequest(REQUEST_ID,SUCCESS_TOKEN);
-                        var geo = new GeoCoder();
-                        console.log('startingPoint currentUser: ');
-                        console.log(currentUser.geoLoc.start);
-                        console.log('endingPoint currentUser: ');
-                        console.log(currentUser.geoLoc.end);
+                        geo = new GeoCoder();
                         startingPoint = geo.reverse(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude);
-                        endingPoint = geo.reverse(currentUser.geoLoc.end.latitude, currentUser.geoLoc.end.latitude);
-                        console.log('startingPoint: ');
-                        console.log(startingPoint);
-                        console.log('endingPoint: ');
-                        console.log(endingPoint);
-                        postMessage(SLACK_QUERY.user_name +' has requested a Uber from '+ startingPoint +' to '+ endingPoint +' :rocket:');
+                        endingPoint = geo.reverse(currentUser.geoLoc.end.latitude, currentUser.geoLoc.end.longitude);
+                        postMessage(SLACK_QUERY.user_name +' has requested a Uber from '+ startingPoint[0].formattedAddress +' to '+ endingPoint[0].formattedAddress +' :rocket:');
                         //postMessage('Map : ' + map.href);
                         console.log('infoUber', infoUber);
                         success = getPriceEstimates(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken);
