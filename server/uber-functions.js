@@ -100,7 +100,7 @@ requestUber = function(driver, latStart, lngStart, latEnd, lngEnd, access_token,
     }
 
     try {
-        if (!SANDBOX) {
+        if (!Meteor.settings.private.uber.sandbox) {
             url = 'https://api.uber.com/v1/requests';
         } else {
             url = 'https://sandbox-api.uber.com/v1/requests';
@@ -118,13 +118,14 @@ requestUber = function(driver, latStart, lngStart, latEnd, lngEnd, access_token,
     }
 };
 
-cancelUber = function(requestId, access_token) {
+cancelUber = function(userId, requestId, access_token) {
     var response = HTTP.del('https://api.uber.com/v1/requests/'+ requestId, {
         headers: { Authorization: 'Bearer ' + access_token }
     });
-
-    REQUEST_ID = null;
-
+    Meteor.update({_id: userId}, { 'uber.requestId' : null}, function(error, result){
+        console.log(error);
+        console.log(result);
+    });
     return response;
 };
 
