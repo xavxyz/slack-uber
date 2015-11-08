@@ -1,7 +1,3 @@
-/**
- * Created by thomas on 17/10/15.
- */
-
 getPriceEstimates = function(starting, ending, access_token) {
     // var geo = new GeoCoder();
     // var result = geo.geocode('29 champs elysée paris');
@@ -48,7 +44,11 @@ fetchUber = function() {
 };
 
 getUberProducts = function(lat, lng, type, access_token){
-    var url = "https://sandbox-api.uber.com/v1/products";
+    if (!SANDBOX) {
+        url = 'https://api.uber.com/v1/products';
+    } else {
+        url = 'https://sandbox-api.uber.com/v1/products';
+    }
     //var access_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZXMiOlsicHJvZmlsZSIsImhpc3RvcnlfbGl0ZSIsImhpc3RvcnkiXSwic3ViIjoiZjBhNzQ0MTMtM2U3Ni00MWE2LWI2NzQtY2RkMjI3MTcxZWZlIiwiaXNzIjoidWJlci11czEiLCJqdGkiOiI2ZDQwZGU4OC02YjFkLTRkNGUtOGMxYy1kNDcyMDI3OTc0OTMiLCJleHAiOjE0NDcxMTI1MDIsImlhdCI6MTQ0NDUyMDUwMiwidWFjdCI6IkFzb3dkbG9CUko0aExrbWNDVUpxV0xZeURyWlI2USIsIm5iZiI6MTQ0NDUyMDQxMiwiYXVkIjoiNGxsYWxqOU5JSXg5S2NsQk9zYnBwT29JMmh3UmVUczkifQ.O6c_v910FQAUsEeDtJVdFBPyWN0ZlIwE46vlgprmCK0JHe5njvbWl0yz22cylH6irMNocCZQIJwQF9-xsPvAbWzQOGOJ8gWyIE4aalcuRErmxiT6IMw_64t32eDBKcHQT8di1L_7h0iQ8gQjvoLP-OqpmG4CflkBNMD38q-Dres9GQDC79mSZWvt-_VNrs3_UDjVjbDOBpvr7rxJ-Nqew4g37oANhKNPUGv104Up1TSyxRf2xjHIVFDUNLSqcBiK6rR_0QuizpwWWT4SzXJf9AY81XmWCcPGoAPzSB4gk_yLC_yCFEryX8kNeYbAo4ozmNLVvFrLdSA7OPW6OVE-EA";
     var response =  HTTP.get(url, {
         params: {
@@ -105,13 +105,25 @@ requestUber = function(driver, latStart, lngStart, latEnd, lngEnd, access_token,
         } else {
             url = 'https://sandbox-api.uber.com/v1/requests';
         }
-        return HTTP.post(url, {
+        var response = HTTP.post(url, {
             data: params,
             headers: {
                 Authorization: 'Bearer ' + access_token,
                 'Content-Type': 'application/json; charset=utf-8'
             }
         });
+
+        Users.update({
+            "uber.successToken": access_token
+        },
+            {$set: {
+                "uber.requestId": response.data.request_id,
+                "uber.requestStatus": response.data.status
+            }}
+        );
+
+        return response;
+
     } catch (err) {
         console.log('error', err);
         return err;
@@ -123,7 +135,14 @@ cancelUber = function(requestId, access_token) {
         headers: { Authorization: 'Bearer ' + access_token }
     });
 
-    REQUEST_ID = null;
+    Users.update({
+            "uber.successToken": access_token
+        },
+        {$set: {
+            "uber.requestId": '',
+            "uber.requestStatus": ''
+        }}
+    );
 
     return response;
 };
