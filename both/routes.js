@@ -203,13 +203,17 @@ Router.route('/price', function() {
 }, {where: 'client'});
 
 Router.route('/status', function () {
-    var data = this.params.query.data;
+    var data = this.request.body; // post request
+    var headers = JSON.parse(this.request.headers);
+    console.log(headers);
+    var urlCut = data.resource_href.split('/');
     var currentUser = Users.findOne({
-        'slack.userId' : SLACK_QUERY.user_id
+        'slack.userId' : SLACK_QUERY.user_id,
+        'uber.requestId' : urlCut[5]
     });
     if(data.event_type == "requests.status_changed") {
         var identity = fetchIdentity(currentUser.uber.successToken);
-        postMessage(identity.first_name +', votre Uber a changé de statut : '+ data.meta.status +' :bowtie:');
+        postMessage('`request:'+ urlCut[5] +'` '+ identity.first_name +', votre Uber a changé de statut : '+ data.meta.status +' :bowtie:');
     }
 
 }, {where: 'server'});
