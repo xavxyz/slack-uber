@@ -44,7 +44,7 @@ fetchUber = function() {
 };
 
 getUberProducts = function(lat, lng, type, access_token){
-    if (!SANDBOX) {
+    if (!Meteor.settings.private.uber.sandbox) {
         url = 'https://api.uber.com/v1/products';
     } else {
         url = 'https://sandbox-api.uber.com/v1/products';
