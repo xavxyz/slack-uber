@@ -16,5 +16,6 @@ Meteor.startup(function(){
         name: 'Slack-Integration'
     });
     console.log('Initializing the Slack-Uber integration!');
+    postMessage('Initializing the Slack-Uber integration!');
 });
 
