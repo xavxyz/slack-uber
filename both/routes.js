@@ -63,7 +63,7 @@ Router.route('/', function () {
                 currentUser.mainProduct = SLACK_QUERY.text;
                 Users.update({_id: currentUser._id},{
                     $set: {
-                        'mainProduct': SLACK_QUERY.text;
+                        'mainProduct': SLACK_QUERY.text
                     }
                 }, function(error, result){
                     console.log('update mainProduct error:');
