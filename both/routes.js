@@ -37,47 +37,8 @@ Router.route('/', function () {
                 console.log(result);
             });
 
-            if ( currentUser.uber.successToken != null) {
-                driver = getUberProducts(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, "uberX", currentUser.uber.successToken);
-                console.log('driver: '+ JSON.stringify(driver));
-
-                if (driver.length == 0) {
-                    this.response.end('No driver available for your request... :squirrel:');
-                } else {
-                    infoUber = requestUber(driver, currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, currentUser.geoLoc.end.latitude, currentUser.geoLoc.end.longitude, currentUser.uber.successToken);
-
-                    console.log('infos sur le uber :'+ JSON.stringify(infoUber));
-
-                    if(infoUber.meta && infoUber.meta.surge_confirmation.href){
-                        console.log('Have to accept surge pricing');
-                        this.response.end('You have to accept surge supricing: \n' +
-                            'Please <' + infoUber.href + '|click here>');
-                    } else {
-                        console.log('REQUEST_ID', infoUber.data.request_id);
-                        Users.update({_id: currentUser._id},{
-                            $set: {
-                                'uber.requestId': infoUber.data.request_id
-                            }
-                        }, function(error, result){
-                            console.log('update requestID error:');
-                            console.log(error);
-                            console.log('update requestID result:');
-                            console.log(result);
-                        });
-                        //var map = mapRequest(REQUEST_ID,SUCCESS_TOKEN);
-                        geo = new GeoCoder();
-                        startingPoint = geo.reverse(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude);
-                        endingPoint = geo.reverse(currentUser.geoLoc.end.latitude, currentUser.geoLoc.end.longitude);
-                        postMessage(SLACK_QUERY.user_name +' has requested a Uber from '+ startingPoint[0].formattedAddress +' to '+ endingPoint[0].formattedAddress +' :rocket:');
-                        //postMessage('Map : ' + map.href);
-                        console.log('infoUber', infoUber);
-                        success = getPriceEstimates(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken);
-                        postMessage('The average timetravel will be: ' + success.minutes + ' min and the average cost will be: ' + success.estimate );
-                    }
-                }
-            } else {
-                this.response.end("No token issued.. Type /uber auth to generate one :ok_hand:");
-            }
+            //function to search uber and to response on slack
+            processRequest(currentUser);
 
         } else {
             adress = SLACK_QUERY.text.slice(7); // remove request from the text
@@ -93,50 +54,27 @@ Router.route('/', function () {
                 console.log('update geoloc result:');
                 console.log(result);
             });
-
-            if ( currentUser.uber.successToken != null) {
-                driver = getUberProducts(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, "uberX", currentUser.uber.successToken);
-                console.log('driver: '+ JSON.stringify(driver));
-
-                if (driver.length == 0) {
-                    this.response.end('No driver available for your request... :squirrel:');
-                } else {
-                    infoUber = requestUber(driver, currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, currentUser.geoLoc.end.latitude, currentUser.geoLoc.end.longitude, currentUser.uber.successToken);
-
-                    console.log('infos sur le uber :'+ JSON.stringify(infoUber));
-
-                    if(infoUber.meta && infoUber.meta.surge_confirmation.href){
-                        console.log('Have to accept surge pricing');
-                        this.response.end('You have to accept surge supricing: \n' +
-                            'Please <' + infoUber.href + '|click here>');
-                    } else {
-                        console.log('REQUEST_ID', infoUber.data.request_id);
-                        currentUser.uber.request_id = infoUber.data.request_id;
-                        Users.update({_id: currentUser._id},{
-                            $set: {
-                                'uber.requestId': infoUber.data.request_id
-                            }
-                        }, function(error, result){
-                            console.log('update requestID error:');
-                            console.log(error);
-                            console.log('update requestID result:');
-                            console.log(result);
-                        });
-                        //var map = mapRequest(REQUEST_ID,SUCCESS_TOKEN);
-                        geo = new GeoCoder();
-                        startingPoint = geo.reverse(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude);
-                        endingPoint = geo.reverse(currentUser.geoLoc.end.latitude, currentUser.geoLoc.end.longitude);
-                        postMessage(SLACK_QUERY.user_name +' has requested a Uber from '+ startingPoint[0].formattedAddress +' to '+ endingPoint[0].formattedAddress +' :rocket:');
-                        //postMessage('Map : ' + map.href);
-                        console.log('infoUber', infoUber);
-                        success = getPriceEstimates(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken);
-                        postMessage('The average timetravel will be: ' + success.minutes + ' min and the average cost will be: ' + success.estimate );
-                    }
-                }
-            } else {
-                this.response.end("No token issued.. Type /uber auth to generate one :ok_hand:");
-            }
+            
+            //function to search uber and to response on slack
+            processRequest(currentUser);
         }
+    } else if (SLACK_QUERY.text.indexOf('uber') == 0 || SLACK_QUERY.text.indexOf('Uber') == 0 {
+            if(TYPE_UBER_LIST.indexOf(SLACK_QUERY.text) == -1){
+                currentUser.mainProduct = SLACK_QUERY.text;
+                Users.update({_id: currentUser._id},{
+                $set: {
+                    'mainProduct': SLACK_QUERY.text;
+                }
+            }, function(error, result){
+                console.log('update geoloc error:');
+                console.log(error);
+                console.log('update geoloc result:');
+                console.log(result);
+            });
+            }
+           //function to search uber and to response on slack
+           processRequest(currentUser);
+
     } else if (SLACK_QUERY.text == 'cancel') {
         if ( currentUser.uber.requestId != null ) {
             cancelUber(currentUser._id, currentUser.uber.requestId, currentUser.uber.successToken);
