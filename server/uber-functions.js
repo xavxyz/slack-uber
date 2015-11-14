@@ -190,13 +190,12 @@ processRequest = function(currentUser){
 
         if (driver.length == 0) {
             this.response.end('No driver available for your request... :squirrel:');
-            postMessage('Estimates for different Uber : \n');                
-            var type_uber_list = ['uberXL', 'UberBLACK', 'UberSUV', 'UberTAXI']
-            TYPE_UBER_NULL.push(TYPE_UBER_DEFAULT)
-            for(i in type_uber_list){
-                if(type_uber_list[i] != TYPE_UBER_DEFAULT && TYPE_UBER_NULL.indexOf(type_uber_list[i]) == -1){
-                    var price = getPriceEstimates(geoLoc.starting, geoLoc.ending, SUCCESS_TOKEN, type_uber_list[i]);
-                    postMessage(' - '+type_uber_list[i]+' '+price.estimate);
+            postMessage('Estimates for different Uber type : \n');                
+            TYPE_UBER_NULL.push(currentUser.mainProduct)
+            for(i in TYPE_UBER_LIST){
+                if(TYPE_UBER_LIST[i] != currentUser.mainProduct && TYPE_UBER_NULL.indexOf(TYPE_UBER_LIST[i]) == -1){
+                    var price = getPriceEstimates(geoLoc.starting, geoLoc.ending, SUCCESS_TOKEN, TYPE_UBER_LIST[i]);
+                    postMessage(' - '+TYPE_UBER_LIST[i]+' '+price.estimate + '\n');
                 }
             }
             postMessage('Choice a uber type (ex: /uber UberXL)')

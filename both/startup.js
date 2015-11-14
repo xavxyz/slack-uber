@@ -7,7 +7,7 @@ Meteor.startup(function(){
     var ID = Meteor.settings.private.uber.client_id;
     var SECRET = Meteor.settings.private.uber.client_secret;
     SLACK_QUERY = null;
-    TYPE_UBER_DEFAULT = "uberX";
+    TYPE_UBER_LIST = [uberX, 'uberXL', 'UberBLACK', 'UberSUV', 'UberTAXI'];
     TYPE_UBER_NULL = [];
     var Uber = Meteor.npmRequire('node-uber');
     uber = new Uber({

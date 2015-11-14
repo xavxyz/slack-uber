@@ -59,21 +59,33 @@ Router.route('/', function () {
             processRequest(currentUser);
         }
     } else if (SLACK_QUERY.text.indexOf('uber') == 0 || SLACK_QUERY.text.indexOf('Uber') == 0 {
-            if(TYPE_UBER_LIST.indexOf(SLACK_QUERY.text) == -1){
+            if(TYPE_UBER_LIST.indexOf(SLACK_QUERY.text) != -1 && TYPE_UBER_NULL.indexOf(SLACK_QUERY.text) == -1){
                 currentUser.mainProduct = SLACK_QUERY.text;
                 Users.update({_id: currentUser._id},{
-                $set: {
-                    'mainProduct': SLACK_QUERY.text;
+                    $set: {
+                        'mainProduct': SLACK_QUERY.text;
+                    }
+                }, function(error, result){
+                    console.log('update mainProduct error:');
+                    console.log(error);
+                    console.log('update mainProduct result:');
+                    console.log(result);
+                });
+
+                //function to search uber and to response on slack
+                processRequest(currentUser);
+
+            } else {
+                this.response.end(SLACK_QUERY.text + 'is not a uber type or is not in your choices list :squirrel: \n');
+                postMessage('Choice a uber type (ex: /uber UberXL) in this list : ')
+                for(i in TYPE_UBER_LIST){
+                    if(TYPE_UBER_LIST[i] != TYPE_UBER_DEFAULT && TYPE_UBER_NULL.indexOf(TYPE_UBER_LIST[i]) == -1){
+                        var price = getPriceEstimates(geoLoc.starting, geoLoc.ending, SUCCESS_TOKEN, TYPE_UBER_LIST[i]);
+                        postMessage(' - '+TYPE_UBER_LIST[i]+' '+price.estimate+ '\n');
+                    }
                 }
-            }, function(error, result){
-                console.log('update geoloc error:');
-                console.log(error);
-                console.log('update geoloc result:');
-                console.log(result);
-            });
             }
-           //function to search uber and to response on slack
-           processRequest(currentUser);
+           
 
     } else if (SLACK_QUERY.text == 'cancel') {
         if ( currentUser.uber.requestId != null ) {
