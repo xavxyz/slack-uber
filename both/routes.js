@@ -58,7 +58,7 @@ Router.route('/', function () {
             //function to search uber and to response on slack
             processRequest(currentUser);
         }
-    } else if (SLACK_QUERY.text.indexOf('uber') == 0 || SLACK_QUERY.text.indexOf('Uber') == 0 {
+    } else if (SLACK_QUERY.text.indexOf('uber') == 0 || SLACK_QUERY.text.indexOf('Uber') == 0) {
             if(TYPE_UBER_LIST.indexOf(SLACK_QUERY.text) != -1 && TYPE_UBER_NULL.indexOf(SLACK_QUERY.text) == -1){
                 currentUser.mainProduct = SLACK_QUERY.text;
                 Users.update({_id: currentUser._id},{
