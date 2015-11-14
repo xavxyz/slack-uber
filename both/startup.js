@@ -1,7 +1,3 @@
-/**
- * Created by thomas on 17/10/15.
- */
-
 Meteor.startup(function(){
     var TOKEN_UBER = Meteor.settings.private.uber.server_token;
     var ID = Meteor.settings.private.uber.client_id;

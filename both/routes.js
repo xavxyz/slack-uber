@@ -147,23 +147,21 @@ Router.route('/', function () {
     } else if (SLACK_QUERY.text == 'status') {
         if ( currentUser.uber.requestId != null ) {
             var details = detailsRequest(currentUser.uber.requestId, currentUser.uber.successToken);
-            postMessage(SLACK_QUERY.user_name + " want to know what's up with Uber :" + details.status);
+            postMessage(SLACK_QUERY.user_name + " want to know what's up with his ride : " + details.status);
         } else {
             this.response.end('Hey dude, a ride need to be requested to be aware of its status :squirrel:');
         }
+    } else if (SLACK_QUERY.text.indexOf('force') == 0) {
+      var status = SLACK_QUERY.text.slice(6);
 
-    } else if (SLACK_QUERY.text == 'force') {
-        changeStatusRequest(currentUser.uber.requestId, 'accepted', currentUser.uber.successToken);
-        postMessage('Chgt de statut forcé 1');
-
-        changeStatusRequest(currentUser.uber.requestId, 'arriving', currentUser.uber.successToken);
-        postMessage('Chgt de statut forcé 2');
-
-        changeStatusRequest(currentUser.uber.requestId, 'driver_canceled', currentUser.uber.successToken);
-        postMessage('Chgt de statut forcé 3');
-
+      if (isStatus(status)) {
+        changeStatusRequest(currentUser.uber.requestId, status, currentUser.uber.successToken);
+        postMessage('[sandbox only]'+ SLACK_QUERY.user_name + " forced his ride's status to change : "+ status);
+      } else {
+        this.response.end('Invalid status, you specified : `'+ status +'` :troll:')
+      }
     } else {
-        this.response.end('Not a valid option! Try `auth`, `request`, `cancel` or `status`');
+        this.response.end("Not a valid option! Try `auth`, `request`, `cancel`, `status`. Sandbox: `force <status>`");
     }
 }, {where: 'server'});
 
@@ -203,17 +201,30 @@ Router.route('/price', function() {
 }, {where: 'client'});
 
 Router.route('/status', function () {
-    var data = this.request.body; // post request
-    var headers = JSON.parse(this.request.headers);
-    console.log(headers);
-    var urlCut = data.resource_href.split('/');
-    var currentUser = Users.findOne({
-        'slack.userId' : SLACK_QUERY.user_id,
-        'uber.requestId' : urlCut[5]
-    });
-    if(data.event_type == "requests.status_changed") {
-        var identity = fetchIdentity(currentUser.uber.successToken);
-        postMessage('`request:'+ urlCut[5] +'` '+ identity.first_name +', votre Uber a changé de statut : '+ data.meta.status +' :bowtie:');
+  var data = this.request.body; // post request
+  var headers = this.request.headers;
+  console.log('headers', headers); // will be used for determining environment: sandbox / production
+
+  var event = {
+    type: data.event_type,
+    status: data.meta.status,
+    requestId: data.resource_href.split('/')[5] // cut the url 'http://api.uber..../request/<reqId>' and get last part which is the req id
+  };
+
+  var currentUser = Users.findOne({
+    'uber.requestId' : event.requestId
+  });
+
+  if (currentUser && currentUser.uber) {
+    if (event.type == "requests.status_changed" && event.status !== currentUser.uber.requestStatus) {
+      var identity = fetchIdentity(currentUser.uber.successToken);
+      changeStatusRequest(currentUser.uber.requestId, event.status, currentUser.uber.successToken);
+      postMessage(identity.first_name +', votre Uber a changé de statut : '+ event.status +' :bowtie:');
+    } else {
+      console.log('hook: status did not changed');
     }
+  } else {
+    console.log('hook: no user found for this request');
+  }
 
 }, {where: 'server'});
