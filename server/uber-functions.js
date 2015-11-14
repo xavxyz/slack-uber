@@ -1,4 +1,4 @@
-getPriceEstimates = function(starting, ending, access_token) {
+getPriceEstimates = function(starting, ending, access_token, type_uber) {
     // var geo = new GeoCoder();
     // var result = geo.geocode('29 champs elysée paris');
     // var arrivee = geo.geocode('10 rue dupleix paris');
@@ -17,7 +17,7 @@ getPriceEstimates = function(starting, ending, access_token) {
 
     var list_uber = [];
     for (var i = 0; i < response.data.prices.length; i++) {
-        if (response.data.prices[i].display_name == 'uberX') {
+        if (response.data.prices[i].display_name == type_uber) {
             list_uber.push(response.data.prices[i]);
         }
     }
@@ -182,3 +182,57 @@ changeStatusRequest = function(id_request, status, access_token){
         }
     });
 };
+
+processRequest = function(currentUser){
+    if ( currentUser.uber.successToken != null) {
+        driver = getUberProducts(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, "uberX", currentUser.uber.successToken);
+        console.log('driver: '+ JSON.stringify(driver));
+
+        if (driver.length == 0) {
+            this.response.end('No driver available for your request... :squirrel:');
+            postMessage('Estimates for different Uber : \n');                
+            var type_uber_list = ['uberXL', 'UberBLACK', 'UberSUV', 'UberTAXI']
+            TYPE_UBER_NULL.push(TYPE_UBER_DEFAULT)
+            for(i in type_uber_list){
+                if(type_uber_list[i] != TYPE_UBER_DEFAULT && TYPE_UBER_NULL.indexOf(type_uber_list[i]) == -1){
+                    var price = getPriceEstimates(geoLoc.starting, geoLoc.ending, SUCCESS_TOKEN, type_uber_list[i]);
+                    postMessage(' - '+type_uber_list[i]+' '+price.estimate);
+                }
+            }
+            postMessage('Choice a uber type (ex: /uber UberXL)')
+        } else {
+            infoUber = requestUber(driver, currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, currentUser.geoLoc.end.latitude, currentUser.geoLoc.end.longitude, currentUser.uber.successToken);
+
+            console.log('infos sur le uber :'+ JSON.stringify(infoUber));
+
+            if(infoUber.meta && infoUber.meta.surge_confirmation.href){
+                console.log('Have to accept surge pricing');
+                this.response.end('You have to accept surge supricing: \n' +
+                    'Please <' + infoUber.href + '|click here>');
+            } else {
+                console.log('REQUEST_ID', infoUber.data.request_id);
+                Users.update({_id: currentUser._id},{
+                    $set: {
+                        'uber.requestId': infoUber.data.request_id
+                    }
+                }, function(error, result){
+                    console.log('update requestID error:');
+                    console.log(error);
+                    console.log('update requestID result:');
+                    console.log(result);
+                });
+                //var map = mapRequest(REQUEST_ID,SUCCESS_TOKEN);
+                geo = new GeoCoder();
+                startingPoint = geo.reverse(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude);
+                endingPoint = geo.reverse(currentUser.geoLoc.end.latitude, currentUser.geoLoc.end.longitude);
+                postMessage(SLACK_QUERY.user_name +' has requested a Uber from '+ startingPoint[0].formattedAddress +' to '+ endingPoint[0].formattedAddress +' :rocket:');
+                //postMessage('Map : ' + map.href);
+                console.log('infoUber', infoUber);
+                success = getPriceEstimates(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken, TYPE_UBER_DEFAULT);
+                postMessage('The average timetravel will be: ' + success.minutes + ' min and the average cost will be: ' + success.estimate );
+            }
+        } 
+    } else {
+        this.response.end("No token issued.. Type /uber auth to generate one :ok_hand:");
+    }
+}
