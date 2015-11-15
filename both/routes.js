@@ -6,7 +6,7 @@ Router.route('/', function () {
     });
 
     if (SLACK_QUERY.text === 'auth') {
-        var link = fetchUber();
+        var link = Uber.auth.link();
         this.response.end('Hey ' + SLACK_QUERY.user_name + ', you have to authorize Uber to interact in Slack: \n' +
             'Please <' + link + '|click here>');
 
@@ -38,13 +38,13 @@ Router.route('/', function () {
             });
 
             if ( currentUser.uber.successToken != null) {
-                driver = getUberProducts(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, "uberX", currentUser.uber.successToken);
+                driver = Uber.getProducts(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, "uberX", currentUser.uber.successToken);
                 console.log('driver: '+ JSON.stringify(driver));
 
                 if (driver.length == 0) {
                     this.response.end('No driver available for your request... :squirrel:');
                 } else {
-                    infoUber = requestUber(driver, currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, currentUser.geoLoc.end.latitude, currentUser.geoLoc.end.longitude, currentUser.uber.successToken);
+                    infoUber = Uber.request.create(driver, currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, currentUser.geoLoc.end.latitude, currentUser.geoLoc.end.longitude, currentUser.uber.successToken);
 
                     console.log('infos sur le uber :'+ JSON.stringify(infoUber));
 
@@ -64,14 +64,14 @@ Router.route('/', function () {
                             console.log('update requestID result:');
                             console.log(result);
                         });
-                        //var map = mapRequest(REQUEST_ID,SUCCESS_TOKEN);
+                        //var map = Uber.request.map(REQUEST_ID,SUCCESS_TOKEN);
                         geo = new GeoCoder();
                         startingPoint = geo.reverse(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude);
                         endingPoint = geo.reverse(currentUser.geoLoc.end.latitude, currentUser.geoLoc.end.longitude);
                         Slack.postMessage(SLACK_QUERY.user_name +' has requested a Uber from '+ startingPoint[0].formattedAddress +' to '+ endingPoint[0].formattedAddress +' :rocket:');
                         //Slack.postMessage('Map : ' + map.href);
                         console.log('infoUber', infoUber);
-                        success = getPriceEstimates(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken);
+                        success = Uber.estimatePrice(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken);
                         Slack.postMessage('The average timetravel will be: ' + success.minutes + ' min and the average cost will be: ' + success.estimate );
                     }
                 }
@@ -95,13 +95,13 @@ Router.route('/', function () {
             });
 
             if ( currentUser.uber.successToken != null) {
-                driver = getUberProducts(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, "uberX", currentUser.uber.successToken);
+                driver = Uber.getProducts(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, "uberX", currentUser.uber.successToken);
                 console.log('driver: '+ JSON.stringify(driver));
 
                 if (driver.length == 0) {
                     this.response.end('No driver available for your request... :squirrel:');
                 } else {
-                    infoUber = requestUber(driver, currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, currentUser.geoLoc.end.latitude, currentUser.geoLoc.end.longitude, currentUser.uber.successToken);
+                    infoUber = Uber.request.create(driver, currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, currentUser.geoLoc.end.latitude, currentUser.geoLoc.end.longitude, currentUser.uber.successToken);
 
                     console.log('infos sur le uber :'+ JSON.stringify(infoUber));
 
@@ -122,14 +122,14 @@ Router.route('/', function () {
                             console.log('update requestID result:');
                             console.log(result);
                         });
-                        //var map = mapRequest(REQUEST_ID,SUCCESS_TOKEN);
+                        //var map = Uber.request.map(REQUEST_ID,SUCCESS_TOKEN);
                         geo = new GeoCoder();
                         startingPoint = geo.reverse(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude);
                         endingPoint = geo.reverse(currentUser.geoLoc.end.latitude, currentUser.geoLoc.end.longitude);
                         Slack.postMessage(SLACK_QUERY.user_name +' has requested a Uber from '+ startingPoint[0].formattedAddress +' to '+ endingPoint[0].formattedAddress +' :rocket:');
                         //Slack.postMessage('Map : ' + map.href);
                         console.log('infoUber', infoUber);
-                        success = getPriceEstimates(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken);
+                        success = Uber.estimatePrice(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken);
                         Slack.postMessage('The average timetravel will be: ' + success.minutes + ' min and the average cost will be: ' + success.estimate );
                     }
                 }
@@ -139,23 +139,24 @@ Router.route('/', function () {
         }
     } else if (SLACK_QUERY.text == 'cancel') {
         if ( currentUser.uber.requestId != null ) {
-            cancelUber(currentUser._id, currentUser.uber.requestId, currentUser.uber.successToken);
+            Uber.request.cancel(currentUser._id, currentUser.uber.requestId, currentUser.uber.successToken);
             Slack.postMessage(SLACK_QUERY.user_name + ' cancelled his ride! :suspect:');
         } else {
             this.response.end('Sorry mate, you cannot cancel a ride which does not exist :wink:');
         }
     } else if (SLACK_QUERY.text == 'status') {
         if ( currentUser.uber.requestId != null ) {
-            var details = detailsRequest(currentUser.uber.requestId, currentUser.uber.successToken);
+            var details = Uber.request.details(currentUser.uber.requestId, currentUser.uber.successToken);
             Slack.postMessage(SLACK_QUERY.user_name + " want to know what's up with his ride : " + details.status);
         } else {
             this.response.end('Hey dude, a ride need to be requested to be aware of its status :squirrel:');
         }
-    } else if (SLACK_QUERY.text.indexOf('force') == 0 && Meteor.settings.private.uber.sandbox == true) {
+    } else if (SLACK_QUERY.text.indexOf('force') == 0) {
       var status = SLACK_QUERY.text.slice(6);
 
-      if (isStatus(status)) {
-        changeStatusRequest(currentUser.uber.requestId, status, currentUser.uber.successToken);
+      if (Uber.isStatus(status)) {
+        Uber.request.status.update(currentUser.uber.requestId, status, currentUser.uber.successToken);
+        Uber.request.status.force(currentUser.uber.requestId, status, currentUser.uber.successToken);
         Slack.postMessage('[sandbox only]'+ SLACK_QUERY.user_name + " forced his ride's status to change : "+ status);
       } else {
         this.response.end('Invalid status, you specified : `'+ status +'` :troll:')
@@ -217,9 +218,8 @@ Router.route('/status', function () {
 
   if (currentUser && currentUser.uber) {
     if (event.type == "requests.status_changed" && event.status !== currentUser.uber.requestStatus) {
-      var identity = fetchIdentity(currentUser.uber.successToken);
-      changeStatusRequest(currentUser.uber.requestId, event.status, currentUser.uber.successToken);
-      Slack.postMessage(identity.first_name +', votre Uber a changé de statut : '+ event.status +' :bowtie:');
+      Uber.request.status.update(currentUser.uber.requestId, event.status, currentUser.uber.successToken);
+      Slack.postMessage(currentUser.slack.name +', votre Uber a changé de statut : '+ event.status +' :bowtie:');
     } else {
       console.log('hook: status did not changed');
     }

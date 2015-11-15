@@ -1,8 +1,18 @@
-getPriceEstimates = function(starting, ending, access_token) {
-    // var geo = new GeoCoder();
-    // var result = geo.geocode('29 champs elysée paris');
-    // var arrivee = geo.geocode('10 rue dupleix paris');
+Uber.auth.link = function() {
+  return 'https://login.uber.com/oauth/v2/authorize?response_type=code&scope=profile%20request&client_id=' + uber.defaults.client_id;
+};
 
+Uber.auth.details = function (accessToken) {
+  try {
+    return HTTP.get("https://api.uber.com/v1/me", {
+      headers: { Authorization: 'Bearer ' + accessToken }
+    }).data;
+  } catch (err) {
+    throw new Error("Failed to fetch identity from Uber " + err.message);
+  }
+};
+
+Uber.estimatePrice = function(starting, ending, access_token) {
     var url = "https://api.uber.com/v1/estimates/price";
     var response = HTTP.get(url, {
         params: {
@@ -13,7 +23,6 @@ getPriceEstimates = function(starting, ending, access_token) {
             end_longitude: ending.longitude
         }
     });
-    console.log(response);
 
     var list_uber = [];
     for (var i = 0; i < response.data.prices.length; i++) {
@@ -22,28 +31,19 @@ getPriceEstimates = function(starting, ending, access_token) {
         }
     }
 
-    // return list_uber;
-    // console.log(response.data.prices);
-    // console.log(list_uber);
     console.log(list_uber);
 
     var mind = list_uber[0].duration % (60 * 60);
-    // var minutes = Math.floor(mind / 60);
 
-    var toto = {
+    var estimation = {
         minutes: Math.floor(mind / 60),
         estimate: list_uber[0].estimate
     };
 
-    // return list_uber[0].estimate;
-    return toto;
+    return estimation;
 };
 
-fetchUber = function() {
-    return 'https://login.uber.com/oauth/v2/authorize?response_type=code&scope=profile%20request&client_id=' + uber.defaults.client_id;
-};
-
-getUberProducts = function(lat, lng, type, access_token){
+Uber.getProducts = function(lat, lng, type, access_token){
     if (!Meteor.settings.private.uber.sandbox) {
         url = 'https://api.uber.com/v1/products';
     } else {
@@ -68,17 +68,19 @@ getUberProducts = function(lat, lng, type, access_token){
     return list_uber;
 };
 
-fetchIdentity = function (accessToken) {
-    try {
-        return HTTP.get("https://api.uber.com/v1/me", {
-            headers: { Authorization: 'Bearer ' + accessToken }
-        }).data;
-    } catch (err) {
-        throw new Error("Failed to fetch identity from Uber " + err.message);
-    }
+Uber.isStatus = function(status) {
+  var list = ['processing', 'accepted', 'arriving', 'in_progress', 'driver_canceled', 'completed'];
+
+  return list.indexOf(status) > -1;
 };
 
-requestUber = function(driver, latStart, lngStart, latEnd, lngEnd, access_token, surge_confirmation_id){
+Uber.isProduct =  function(product) {
+  var list = ['uberX', 'uberXL', 'UberBLACK', 'UberSUV', 'UberTAXI'];
+
+  return list.indexOf(product) > -1;
+};
+
+Uber.request.create = function(driver, latStart, lngStart, latEnd, lngEnd, access_token, surge_confirmation_id){
     var params;
     if(surge_confirmation_id){
         params = {
@@ -130,7 +132,7 @@ requestUber = function(driver, latStart, lngStart, latEnd, lngEnd, access_token,
     }
 };
 
-cancelUber = function(userId, requestId, access_token) {
+Uber.request.cancel = function(userId, requestId, access_token) {
     var response = HTTP.del('https://api.uber.com/v1/requests/'+ requestId, {
         headers: { Authorization: 'Bearer ' + access_token }
     });
@@ -148,7 +150,7 @@ cancelUber = function(userId, requestId, access_token) {
     return response;
 };
 
-detailsRequest = function(id_request, access_token){
+Uber.request.details = function(id_request, access_token){
     var details = HTTP.get('https://sandbox-api.uber.com/v1/requests/'+ id_request, {
         headers: {
             Authorization: 'Bearer ' + access_token,
@@ -161,7 +163,7 @@ detailsRequest = function(id_request, access_token){
     return details.data;
 };
 
-mapRequest = function(id_request, access_token){
+Uber.request.map = function(id_request, access_token){
     return  HTTP.get('https://sandbox-api.uber.com/v1/requests/'+ id_request+'/map/', {
         headers: {
             Authorization: 'Bearer ' + access_token,
@@ -170,11 +172,7 @@ mapRequest = function(id_request, access_token){
     });
 };
 
-changeStatusRequest = function(id_request, status, access_token) {
-  var body = JSON.stringify({
-    status: status
-  });
-
+Uber.request.status.update = function(id_request, status, access_token) {
   Users.update({
       "uber.successToken": access_token
     },
@@ -182,18 +180,18 @@ changeStatusRequest = function(id_request, status, access_token) {
       "uber.requestStatus": status
     }}
   );
+};
+
+Uber.request.status.force = function(id_request, status, access_token) {
+  var body = JSON.stringify({
+    status: status
+  });
 
   return HTTP.put('https://sandbox-api.uber.com/v1/sandbox/requests/'+ id_request, {
     headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + access_token
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + access_token
     },
     content: body
   });
 };
-
-isStatus = function(status) {
-  var list = ['processing', 'accepted', 'arriving', 'in_progress', 'driver_canceled', 'completed'];
-
-  return list.indexOf(status) > -1;
-}

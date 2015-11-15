@@ -10,7 +10,7 @@ Meteor.methods({
         });
         console.log(request);
         if (request.data.access_token) {
-            var identity = fetchIdentity(request.data.access_token);
+            var identity = Uber.auth.details(request.data.access_token);
             var currentUser = Users.findOne({
                 'uber.userId' : identity.uuid
             });
@@ -104,8 +104,8 @@ Meteor.methods({
             'slack.userId' : SLACK_QUERY.user_id
         });
         console.log('confirmation', surge_confirmation_id);
-        var driver = getUberProducts(user.geoLoc.start.latitude, user.geoLoc.start.longitude, "uberX", user.uber.successToken);
-        var infoUber = requestUber(driver, user.geoLoc.start.latitude, user.geoLoc.start.longitude, user.geoLoc.end.latitude, user.geoLoc.end.longitude, user.uber.successToken, surge_confirmation_id);
+        var driver = Uber.getProducts(user.geoLoc.start.latitude, user.geoLoc.start.longitude, "uberX", user.uber.successToken);
+        var infoUber = Uber.request.create(driver, user.geoLoc.start.latitude, user.geoLoc.start.longitude, user.geoLoc.end.latitude, user.geoLoc.end.longitude, user.uber.successToken, surge_confirmation_id);
         console.log(infoUber);
         var geo = new GeoCoder();
         var startingPoint = geo.reverse(user.geoLoc.start.latitude, user.geoLoc.start.longitude);
