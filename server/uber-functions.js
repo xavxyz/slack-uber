@@ -170,15 +170,30 @@ mapRequest = function(id_request, access_token){
     });
 };
 
-changeStatusRequest = function(id_request, status, access_token){
-    return  HTTP.get('https://sandbox-api.uber.com/v1/sandbox/requests/'+ id_request, {
-        headers: {
-            Authorization: 'Bearer ' + access_token,
-            'Content-Type': 'application/json; charset=utf-8'
-        },
-        params: {
-            status: status,
-            request_id: id_request
-        }
-    });
+changeStatusRequest = function(id_request, status, access_token) {
+  var body = JSON.stringify({
+    status: status
+  });
+
+  Users.update({
+      "uber.successToken": access_token
+    },
+    {$set: {
+      "uber.requestStatus": status
+    }}
+  );
+
+  return HTTP.put('https://sandbox-api.uber.com/v1/sandbox/requests/'+ id_request, {
+    headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + access_token
+    },
+    content: body
+  });
 };
+
+isStatus = function(status) {
+  var list = ['processing', 'accepted', 'arriving', 'in_progress', 'driver_canceled', 'completed'];
+
+  return list.indexOf(status) > -1;
+}
