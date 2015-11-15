@@ -38,7 +38,7 @@ Router.route('/', function () {
             });
 
             if ( currentUser.uber.successToken != null) {
-                driver = Uber.getProducts(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, "uberX", currentUser.uber.successToken);
+                driver = Uber.estimate.product(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, "uberX", currentUser.uber.successToken);
                 console.log('driver: '+ JSON.stringify(driver));
 
                 if (driver.length == 0) {
@@ -71,7 +71,7 @@ Router.route('/', function () {
                         Slack.postMessage(SLACK_QUERY.user_name +' has requested a Uber from '+ startingPoint[0].formattedAddress +' to '+ endingPoint[0].formattedAddress +' :rocket:');
                         //Slack.postMessage('Map : ' + map.href);
                         console.log('infoUber', infoUber);
-                        success = Uber.estimatePrice(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken);
+                        success = Uber.estimate.cost(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken);
                         Slack.postMessage('The average timetravel will be: ' + success.minutes + ' min and the average cost will be: ' + success.estimate );
                     }
                 }
@@ -95,7 +95,7 @@ Router.route('/', function () {
             });
 
             if ( currentUser.uber.successToken != null) {
-                driver = Uber.getProducts(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, "uberX", currentUser.uber.successToken);
+                driver = Uber.estimate.product(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, "uberX", currentUser.uber.successToken);
                 console.log('driver: '+ JSON.stringify(driver));
 
                 if (driver.length == 0) {
@@ -129,7 +129,7 @@ Router.route('/', function () {
                         Slack.postMessage(SLACK_QUERY.user_name +' has requested a Uber from '+ startingPoint[0].formattedAddress +' to '+ endingPoint[0].formattedAddress +' :rocket:');
                         //Slack.postMessage('Map : ' + map.href);
                         console.log('infoUber', infoUber);
-                        success = Uber.estimatePrice(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken);
+                        success = Uber.estimate.cost(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken);
                         Slack.postMessage('The average timetravel will be: ' + success.minutes + ' min and the average cost will be: ' + success.estimate );
                     }
                 }

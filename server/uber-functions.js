@@ -12,7 +12,7 @@ Uber.auth.details = function (accessToken) {
   }
 };
 
-Uber.estimatePrice = function(starting, ending, access_token) {
+Uber.estimate.cost = function(starting, ending, access_token) {
     var url = "https://api.uber.com/v1/estimates/price";
     var response = HTTP.get(url, {
         params: {
@@ -43,7 +43,7 @@ Uber.estimatePrice = function(starting, ending, access_token) {
     return estimation;
 };
 
-Uber.getProducts = function(lat, lng, type, access_token){
+Uber.estimate.product = function(lat, lng, type, access_token){
     if (!Meteor.settings.private.uber.sandbox) {
         url = 'https://api.uber.com/v1/products';
     } else {
