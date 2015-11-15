@@ -58,7 +58,7 @@ Meteor.methods({
                     console.log('update error', error);
                     console.log('update success', success);
 
-                    postMessage(identity.first_name +' '+ identity.last_name +' logged to Uber with success!');
+                    Slack.postMessage(identity.first_name +' '+ identity.last_name +' logged to Uber with success!');
 
                 });
             }else{
@@ -91,11 +91,11 @@ Meteor.methods({
                     console.log('insert error', error);
                     console.log('insert success', success);
 
-                    postMessage( identity.first_name +' '+ identity.last_name +' logged to Uber with success!');
+                    Slack.postMessage( identity.first_name +' '+ identity.last_name +' logged to Uber with success!');
                 })
             }
         } else {
-            postMessage('Error during login, please try again.');
+            Slack.postMessage('Error during login, please try again.');
         }
         return request;
     },
@@ -110,7 +110,7 @@ Meteor.methods({
         var geo = new GeoCoder();
         var startingPoint = geo.reverse(user.geoLoc.start.latitude, user.geoLoc.start.longitude);
         var endingPoint = geo.reverse(user.geoLoc.end.latitude, user.geoLoc.end.latitude);
-        postMessage(SLACK_QUERY.user_name + ' has requested a Uber from '+ startingPoint.formattedAddress +' to '+ endingPoint.formattedAddress +':meteor::taco:');
+        Slack.postMessage(SLACK_QUERY.user_name + ' has requested a Uber from '+ startingPoint.formattedAddress +' to '+ endingPoint.formattedAddress +':meteor::taco:');
         return true;
     }
 });
