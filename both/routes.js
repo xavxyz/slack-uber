@@ -151,7 +151,7 @@ Router.route('/', function () {
         } else {
             this.response.end('Hey dude, a ride need to be requested to be aware of its status :squirrel:');
         }
-    } else if (SLACK_QUERY.text.indexOf('force') == 0) {
+    } else if (SLACK_QUERY.text.indexOf('force') == 0 && Meteor.settings.private.uber.sandbox == true) {
       var status = SLACK_QUERY.text.slice(6);
 
       if (isStatus(status)) {
