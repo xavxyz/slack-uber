@@ -16,23 +16,27 @@ getPriceEstimates = function(starting, ending, access_token, type_uber) {
     console.log(response);
 
     var list_uber = [];
-    for (var i = 0; i < response.data.prices.length; i++) {
-        if (response.data.prices[i].display_name == type_uber) {
-            list_uber.push(response.data.prices[i]);
+    setTimeout(function(){        
+        for (var i = 0; i < response.data.prices.length; i++) {
+            if (response.data.prices[i].display_name == type_uber) {
+                list_uber.push(response.data.prices[i]);
+            }
         }
-    }
+    }, 2000);
+    
 
     // return list_uber;
     // console.log(response.data.prices);
     // console.log(list_uber);
     console.log(list_uber);
 
-    var mind = list_uber[0].duration % (60 * 60);
+    //var mind = list_uber[0].duration % (60 * 60);
+    var mind = response.data.prices[0].duration % (60 * 60);
     // var minutes = Math.floor(mind / 60);
 
     var toto = {
         minutes: Math.floor(mind / 60),
-        estimate: list_uber[0].estimate
+        estimate: response.data.prices[0].estimate
     };
 
     // return list_uber[0].estimate;

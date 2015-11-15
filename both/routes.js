@@ -80,7 +80,7 @@ Router.route('/', function () {
                 postMessage('Choice a uber type (ex: /uber UberXL) in this list : ')
                 for(i in TYPE_UBER_LIST){
                     if(TYPE_UBER_LIST[i] != TYPE_UBER_DEFAULT && TYPE_UBER_NULL.indexOf(TYPE_UBER_LIST[i]) == -1){
-                        var price = getPriceEstimates(geoLoc.starting, geoLoc.ending, SUCCESS_TOKEN, TYPE_UBER_LIST[i]);
+                        var price = getPriceEstimates(geoLoc.starting, geoLoc.ending, currentUser.mainProduct, TYPE_UBER_LIST[i]);
                         postMessage(' - '+TYPE_UBER_LIST[i]+' '+price.estimate+ '\n');
                     }
                 }
