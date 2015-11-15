@@ -200,14 +200,14 @@ processRequest = function(currentUser){
     if ( currentUser.uber.successToken != null) {
         driver = getUberProducts(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, "uberX", currentUser.uber.successToken);
         console.log('driver: '+ JSON.stringify(driver));
-
+        driver = "";
         if (driver.length == 0) {
-            this.response.end('No driver available for your request... :squirrel:');
+            postMessage('No driver available for your request... :squirrel:');
             postMessage('Estimates for different Uber type : \n');                
             TYPE_UBER_NULL.push(currentUser.mainProduct)
             for(i in TYPE_UBER_LIST){
                 if(TYPE_UBER_LIST[i] != currentUser.mainProduct && TYPE_UBER_NULL.indexOf(TYPE_UBER_LIST[i]) == -1){
-                    var price = getPriceEstimates(geoLoc.starting, geoLoc.ending, SUCCESS_TOKEN, TYPE_UBER_LIST[i]);
+                    var price = getPriceEstimates(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken, TYPE_UBER_LIST[i]);
                     postMessage(' - '+TYPE_UBER_LIST[i]+' '+price.estimate + '\n');
                 }
             }
