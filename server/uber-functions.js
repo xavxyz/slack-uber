@@ -227,7 +227,7 @@ processRequest = function(currentUser){
                 postMessage(SLACK_QUERY.user_name +' has requested a Uber from '+ startingPoint[0].formattedAddress +' to '+ endingPoint[0].formattedAddress +' :rocket:');
                 //postMessage('Map : ' + map.href);
                 console.log('infoUber', infoUber);
-                success = getPriceEstimates(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken, TYPE_UBER_DEFAULT);
+                success = getPriceEstimates(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken, currentUser.mainProduct);
                 postMessage('The average timetravel will be: ' + success.minutes + ' min and the average cost will be: ' + success.estimate );
             }
         } 
