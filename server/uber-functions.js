@@ -200,18 +200,19 @@ processRequest = function(currentUser){
     if ( currentUser.uber.successToken != null) {
         driver = getUberProducts(currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, "uberX", currentUser.uber.successToken);
         console.log('driver: '+ JSON.stringify(driver));
-        driver = "";
+        driver = ""; // variable to test - must be deleted
         if (driver.length == 0) {
-            postMessage('No driver available for your request... :squirrel:');
+            postMessage('No driver available for your request with uber type '+currentUser.uber.mainProduct+'... :squirrel:');
             postMessage('Estimates for different Uber type : \n');                
-            TYPE_UBER_NULL.push(currentUser.mainProduct)
+            postMessage('Choice a uber type (ex: /uber UberXL)');
+            TYPE_UBER_NULL.push(currentUser.uber.mainProduct);
+            console.log(TYPE_UBER_NULL);
             for(i in TYPE_UBER_LIST){
-                if(TYPE_UBER_LIST[i] != currentUser.mainProduct && TYPE_UBER_NULL.indexOf(TYPE_UBER_LIST[i]) == -1){
+                if(TYPE_UBER_LIST[i] != currentUser.uber.mainProduct && TYPE_UBER_NULL.indexOf(TYPE_UBER_LIST[i]) == -1){
                     var price = getPriceEstimates(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken, TYPE_UBER_LIST[i]);
                     postMessage(' - '+TYPE_UBER_LIST[i]+' '+price.estimate + '\n');
                 }
             }
-            postMessage('Choice a uber type (ex: /uber UberXL)')
         } else {
             infoUber = requestUber(driver, currentUser.geoLoc.start.latitude, currentUser.geoLoc.start.longitude, currentUser.geoLoc.end.latitude, currentUser.geoLoc.end.longitude, currentUser.uber.successToken);
 
@@ -240,7 +241,7 @@ processRequest = function(currentUser){
                 postMessage(SLACK_QUERY.user_name +' has requested a Uber from '+ startingPoint[0].formattedAddress +' to '+ endingPoint[0].formattedAddress +' :rocket:');
                 //postMessage('Map : ' + map.href);
                 console.log('infoUber', infoUber);
-                success = getPriceEstimates(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken, currentUser.mainProduct);
+                success = getPriceEstimates(currentUser.geoLoc.start, currentUser.geoLoc.end, currentUser.uber.successToken, currentUser.uber.mainProduct);
                 postMessage('The average timetravel will be: ' + success.minutes + ' min and the average cost will be: ' + success.estimate );
             }
         } 
