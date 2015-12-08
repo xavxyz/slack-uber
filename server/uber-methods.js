@@ -1,9 +1,9 @@
 Meteor.methods({
     authUber: function(code, coords) {
         var request =  HTTP.post('https://login.uber.com/oauth/v2/token', {
-            auth: [uber.defaults.client_id, uber.defaults.client_secret].join(':'),
+            auth: [uberSettings.defaults.client_id, uberSettings.defaults.client_secret].join(':'),
             params: {
-                redirect_uri: uber.defaults.redirect_uri,
+                redirect_uri: uberSettings.defaults.redirect_uri,
                 code: code,
                 grant_type: 'authorization_code'
             }
