@@ -1,16 +1,16 @@
 Meteor.methods({
     authUber: function(code, coords) {
         var request =  HTTP.post('https://login.uber.com/oauth/v2/token', {
-            auth: [uber.defaults.client_id, uber.defaults.client_secret].join(':'),
+            auth: [uberSettings.defaults.client_id, uberSettings.defaults.client_secret].join(':'),
             params: {
-                redirect_uri: uber.defaults.redirect_uri,
+                redirect_uri: uberSettings.defaults.redirect_uri,
                 code: code,
                 grant_type: 'authorization_code'
             }
         });
         console.log(request);
         if (request.data.access_token) {
-            var identity = fetchIdentity(request.data.access_token);
+            var identity = Uber.auth.details(request.data.access_token);
             var currentUser = Users.findOne({
                 'uber.userId' : identity.uuid
             });
@@ -58,7 +58,7 @@ Meteor.methods({
                     console.log('update error', error);
                     console.log('update success', success);
 
-                    postMessage(identity.first_name +' '+ identity.last_name +' logged to Uber with success!');
+                    Slack.postMessage(identity.first_name +' '+ identity.last_name +' logged to Uber with success!');
 
                 });
             }else{
@@ -91,11 +91,11 @@ Meteor.methods({
                     console.log('insert error', error);
                     console.log('insert success', success);
 
-                    postMessage( identity.first_name +' '+ identity.last_name +' logged to Uber with success!');
+                    Slack.postMessage( identity.first_name +' '+ identity.last_name +' logged to Uber with success!');
                 })
             }
         } else {
-            postMessage('Error during login, please try again.');
+            Slack.postMessage('Error during login, please try again.');
         }
         return request;
     },
@@ -104,13 +104,13 @@ Meteor.methods({
             'slack.userId' : SLACK_QUERY.user_id
         });
         console.log('confirmation', surge_confirmation_id);
-        var driver = getUberProducts(user.geoLoc.start.latitude, user.geoLoc.start.longitude, "uberX", user.uber.successToken);
-        var infoUber = requestUber(driver, user.geoLoc.start.latitude, user.geoLoc.start.longitude, user.geoLoc.end.latitude, user.geoLoc.end.longitude, user.uber.successToken, surge_confirmation_id);
+        var driver = Uber.getProducts(user.geoLoc.start.latitude, user.geoLoc.start.longitude, "uberX", user.uber.successToken);
+        var infoUber = Uber.request.create(driver, user.geoLoc.start.latitude, user.geoLoc.start.longitude, user.geoLoc.end.latitude, user.geoLoc.end.longitude, user.uber.successToken, surge_confirmation_id);
         console.log(infoUber);
         var geo = new GeoCoder();
         var startingPoint = geo.reverse(user.geoLoc.start.latitude, user.geoLoc.start.longitude);
         var endingPoint = geo.reverse(user.geoLoc.end.latitude, user.geoLoc.end.latitude);
-        postMessage(SLACK_QUERY.user_name + ' has requested a Uber from '+ startingPoint.formattedAddress +' to '+ endingPoint.formattedAddress +':meteor::taco:');
+        Slack.postMessage(SLACK_QUERY.user_name + ' has requested a Uber from '+ startingPoint.formattedAddress +' to '+ endingPoint.formattedAddress +':meteor::taco:');
         return true;
     }
 });
