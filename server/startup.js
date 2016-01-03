@@ -2,7 +2,6 @@ Meteor.startup(function(){
     var TOKEN_UBER = Meteor.settings.private.uber.server_token;
     var ID = Meteor.settings.private.uber.client_id;
     var SECRET = Meteor.settings.private.uber.client_secret;
-    SLACK_QUERY = null;
     var UberNode = Meteor.npmRequire('node-uber');
     uberSettings = new UberNode({
         client_id: ID,
@@ -12,6 +11,6 @@ Meteor.startup(function(){
         name: 'Slack-Integration'
     });
     console.log('Initializing the Slack-Uber integration!');
-    Slack.postMessage('Initializing the Slack-Uber integration!');
+    //Slack.postMessage('Initializing the Slack-Uber integration!');
 });
 
