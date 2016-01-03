@@ -1,5 +1,5 @@
 Meteor.methods({
-    authUber: function(code, coords) {
+    authUber: function(code, coords, slackQuery) {
         var request =  HTTP.post('https://login.uber.com/oauth/v2/token', {
             auth: [uberSettings.defaults.client_id, uberSettings.defaults.client_secret].join(':'),
             params: {
@@ -23,16 +23,16 @@ Meteor.methods({
                     exist = false;
 
                 setSlack.forEach(function(element){
-                    if(element.userId === SLACK_QUERY.user_id){
+                    if(element.userId === slackQuery.user_id){
                         exist = true;
                     }
                 });
                 if(!exist){
                     setSlack.push({
-                        userId: SLACK_QUERY.user_id,
-                        name: SLACK_QUERY.user_name,
-                        token: SLACK_QUERY.token,
-                        channel: SLACK_QUERY.channel_id
+                        userId: slackQuery.user_id,
+                        name: slackQuery.user_name,
+                        token: slackQuery.token,
+                        channel: slackQuery.channel_id
                     });
                 }
 
@@ -66,10 +66,10 @@ Meteor.methods({
                 Users.insert({
                     slack: [
                         {
-                            userId: SLACK_QUERY.user_id,
-                            name: SLACK_QUERY.user_name,
-                            token: SLACK_QUERY.token,
-                            channel: SLACK_QUERY.channel_id
+                            userId: slackQuery.user_id,
+                            name: slackQuery.user_name,
+                            token: slackQuery.token,
+                            channel: slackQuery.channel_id
                         }
                     ],
                     uber: {
@@ -101,7 +101,7 @@ Meteor.methods({
     },
     priceUber: function(surge_confirmation_id) {
         var user = Users.findOne({
-            'slack.userId' : SLACK_QUERY.user_id
+            'slack.userId' : slackQuery.user_id
         });
         console.log('confirmation', surge_confirmation_id);
         var driver = Uber.getProducts(user.geoLoc.start.latitude, user.geoLoc.start.longitude, "uberX", user.uber.successToken);
@@ -110,7 +110,7 @@ Meteor.methods({
         var geo = new GeoCoder();
         var startingPoint = geo.reverse(user.geoLoc.start.latitude, user.geoLoc.start.longitude);
         var endingPoint = geo.reverse(user.geoLoc.end.latitude, user.geoLoc.end.latitude);
-        Slack.postMessage(SLACK_QUERY.user_name + ' has requested a Uber from '+ startingPoint.formattedAddress +' to '+ endingPoint.formattedAddress +':meteor::taco:');
+        Slack.postMessage(slackQuery.user_name + ' has requested a Uber from '+ startingPoint.formattedAddress +' to '+ endingPoint.formattedAddress +':meteor::taco:');
         return true;
     }
 });
