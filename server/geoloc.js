@@ -3,7 +3,7 @@ Geoloc = {
 		var geo = new GeoCoder({
 			geocoderProvider: "google",
 			httpAdapter: "https",
-			apiKey: "AIzaSyATN0-PAf_l4rrLm8pDaSWfLrim2xVjTCY"
+			apiKey: Meteor.settings.private.google
 		});
 
 		var result = geo.geocode(address);
